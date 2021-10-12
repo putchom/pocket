@@ -17,6 +17,7 @@ use wio::prelude::*;
 #[entry]
 fn main() -> ! {
     let mut peripherals = Peripherals::take().unwrap();
+
     // クロックを初期化する
     let core = CorePeripherals::take().unwrap();
     let mut clocks = GenericClockController::with_external_32kosc(
@@ -59,10 +60,6 @@ fn main() -> ! {
         &mut peripherals.MCLK,
         &mut sets.port,
     );
-
-    // デバイスIDを取得、0x33が格納されている
-    let accel_id = accel.get_device_id().unwrap();
-    writeln!(&mut serial, "Accelerometer ID: 0x{:X}", accel_id).unwrap();
 
     // 画面に「Hello world!」と表示する
     Text::new("Hello world!", Point::new(30, 30))

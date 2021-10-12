@@ -1,11 +1,13 @@
 #![no_std]
 #![no_main]
 
+use embedded_graphics as eg;
 use panic_halt as _;
 use wio_terminal as wio;
 
 use accelerometer::{vector::F32x3, Accelerometer};
 use core::fmt::Write;
+use eg::{fonts::*, pixelcolor::*, prelude::*, style::*};
 use wio::entry;
 use wio::hal::clock::GenericClockController;
 use wio::hal::delay::Delay;
@@ -28,6 +30,19 @@ fn main() -> ! {
     let mut sets = wio::Pins::new(peripherals.PORT).split();
     let mut delay = Delay::new(core.SYST, &mut clocks);
 
+    // ディスプレイドライバを初期化する
+    let (mut display, _backlight) = sets
+        .display
+        .init(
+            &mut clocks,
+            peripherals.SERCOM7,
+            &mut peripherals.MCLK,
+            &mut sets.port,
+            58.mhz(),
+            &mut delay,
+        )
+        .unwrap();
+
     // UARTドライバオブジェクトを初期化する
     let mut serial = sets.uart.init(
         &mut clocks,
@@ -48,6 +63,12 @@ fn main() -> ! {
     // デバイスIDを取得、0x33が格納されている
     let accel_id = accel.get_device_id().unwrap();
     writeln!(&mut serial, "Accelerometer ID: 0x{:X}", accel_id).unwrap();
+
+    // 画面に「Hello world!」と表示する
+    Text::new("Hello world!", Point::new(30, 30))
+        .into_styled(TextStyle::new(Font12x16, Rgb565::BLACK))
+        .draw(&mut display)
+        .unwrap();
 
     // 1秒ごとに加速度センサから読み取った値をシリアルに出力する
     loop {

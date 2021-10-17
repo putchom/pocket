@@ -8,6 +8,7 @@ use wio_terminal as wio;
 use accelerometer::{vector::F32x3, Accelerometer};
 use core::fmt::Write;
 use eg::{fonts::*, pixelcolor::*, prelude::*, style::*};
+use micromath::F32Ext;
 use wio::entry;
 use wio::hal::clock::GenericClockController;
 use wio::hal::delay::Delay;
@@ -67,10 +68,47 @@ fn main() -> ! {
         .draw(&mut display)
         .unwrap();
 
-    // 1秒ごとに加速度センサから読み取った値をシリアルに出力する
+    let mut count = 0;
+    let mut total = 0.0;
+    let mut threshold = 1.5;
+    let mut hysteresis = 0.15;
+    let mut step_count = 0;
+    let mut state = false;
+    let mut last_state = false;
+
     loop {
         let F32x3 { x, y, z } = accel.accel_norm().unwrap();
-        writeln!(&mut serial, "X:{:.2}, Y:{:.2}, X:{:.2}", x, y, z).unwrap();
-        delay.delay_ms(1000u16);
+
+        // XYZ軸の合成値
+        let composite_value = (x.powf(2.0) + y.powf(2.0) + z.powf(2.0)).sqrt();
+
+        // XYZ軸の合成値を、50サンプルごとに平均したものを閾値として設定する。閾値近辺の値を誤検出しないようにヒステリシスも設定する。
+        if count < 50 {
+            total += composite_value;
+            count += 1;
+        } else {
+            threshold = total / count as f32;
+            hysteresis = threshold / 5.0;
+            total = 0.0;
+            count = 0;
+        }
+
+        // 閾値の判定
+        if composite_value > (threshold + hysteresis) {
+            state = true;
+        } else if composite_value < (threshold - hysteresis) {
+            state = false
+        }
+
+        // 歩数をカウントする
+        if !last_state && state {
+            step_count += 1;
+            last_state = state;
+        } else if last_state && !state {
+            last_state = state;
+        }
+
+        writeln!(&mut serial, "Step count: {:.2}", step_count).unwrap();
+        delay.delay_ms(100u16);
     }
 }

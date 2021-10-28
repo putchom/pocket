@@ -8,7 +8,12 @@ use wio_terminal as wio;
 use accelerometer::{vector::F32x3, Accelerometer};
 use core::fmt::Write;
 use eg::{
-    egrectangle, egtext, fonts::Font24x32, pixelcolor::*, prelude::*, primitive_style, text_style,
+    egrectangle, egtext,
+    fonts::Font24x32,
+    image::{Image, ImageRawLE},
+    pixelcolor::*,
+    prelude::*,
+    primitive_style, text_style,
 };
 use heapless::consts::*;
 use heapless::String;
@@ -94,6 +99,11 @@ fn main() -> ! {
     .unwrap();
     // 歩数カウントも初期化
     draw_step_count(&mut display, &mut 0).unwrap();
+
+    // キャラクターを描画する
+    let raw = ImageRawLE::new(include_bytes!("./assets/ferris.raw"), 86, 64);
+    let image = Image::new(&raw, Point::new(0, 32));
+    image.draw(&mut display).unwrap();
 
     // UARTドライバオブジェクトを初期化する
     let mut serial = sets.uart.init(

@@ -1,16 +1,13 @@
-use embedded_graphics as eg;
-
 use core::fmt::Write;
-use eg::{
+use embedded_graphics::{
     egrectangle, egtext,
     fonts::Font24x32,
-    image::{Image, ImageRawLE},
-    pixelcolor::*,
+    image::{Image, ImageRaw},
+    pixelcolor::{raw::LittleEndian, Rgb565},
     prelude::*,
     primitive_style, text_style,
 };
-use heapless::consts::*;
-use heapless::String;
+use heapless::{consts::*, String};
 
 pub struct Screen {
     pub width: i32,
@@ -26,7 +23,7 @@ impl Screen {
     }
     pub fn draw_background<T>(&self, display: &mut T) -> Result<(), T::Error>
     where
-        T: embedded_graphics::DrawTarget<Rgb565>,
+        T: DrawTarget<Rgb565>,
     {
         egrectangle!(
             top_left = (0, 0),
@@ -38,7 +35,7 @@ impl Screen {
     }
     pub fn draw_pedometer<T>(&self, display: &mut T, step_count: &mut i32) -> Result<(), T::Error>
     where
-        T: embedded_graphics::DrawTarget<Rgb565>,
+        T: DrawTarget<Rgb565>,
     {
         // カウント表示エリアをクリアする
         const FONT_WIDTH: i32 = 24;
@@ -50,15 +47,16 @@ impl Screen {
         )
         .draw(display)?;
 
-        // 歩数を描画する
         let mut textbuffer = String::<U256>::new();
         write!(&mut textbuffer, "{:.2}", step_count).unwrap();
 
         // 座標計算用に文字列の長さを取得
         let length = textbuffer.len();
+
         // 右詰描画用に左の座標計算
         let left = self.width - (length as i32) * FONT_WIDTH;
 
+        // 歩数を描画する
         egtext!(
             text = textbuffer.as_str(),
             top_left = (left, 0),
@@ -67,13 +65,16 @@ impl Screen {
         .draw(display)?;
         Ok(())
     }
-    pub fn draw_character<T>(&self, display: &mut T) -> Result<(), T::Error>
+    pub fn draw_character<T>(
+        &self,
+        display: &mut T,
+        image_data: ImageRaw<Rgb565, LittleEndian>,
+        position: Point,
+    ) -> Result<(), T::Error>
     where
-        T: embedded_graphics::DrawTarget<Rgb565>,
+        T: DrawTarget<Rgb565>,
     {
-        let raw = ImageRawLE::new(include_bytes!("./assets/ferris.raw"), 86, 64);
-        let image = Image::new(&raw, Point::new(0, 32));
-        image.draw(display)?;
+        Image::new(&image_data, position).draw(display)?;
         Ok(())
     }
 }

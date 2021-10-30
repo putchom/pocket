@@ -10,6 +10,7 @@ use crate::pedometer::Pedometer;
 use crate::screen::Screen;
 
 use accelerometer::Accelerometer;
+use embedded_graphics::{image::ImageRawLE, prelude::*};
 use panic_halt as _;
 use wio_terminal::{
     entry,
@@ -76,7 +77,13 @@ fn main() -> ! {
 
     // キャラクターの初期化
     let _character = Character::new();
-    Screen::draw_character(&screen, &mut display).unwrap();
+    Screen::draw_character(
+        &screen,
+        &mut display,
+        ImageRawLE::new(include_bytes!("./assets/ferris.raw"), 86, 64),
+        Point::new(0, 32),
+    )
+    .unwrap();
 
     loop {
         pedometer.update(accel.accel_norm().unwrap());

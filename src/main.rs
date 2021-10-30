@@ -67,7 +67,7 @@ fn main() -> ! {
     );
 
     // Screenの初期化
-    let screen = Screen::new();
+    let screen = Screen::new(320, 240);
     Screen::draw_background(&screen, &mut display).unwrap();
 
     // 歩数計の初期化

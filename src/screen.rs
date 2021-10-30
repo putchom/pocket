@@ -15,11 +15,8 @@ pub struct Screen {
 }
 
 impl Screen {
-    pub fn new() -> Screen {
-        Screen {
-            width: 320,
-            height: 240,
-        }
+    pub fn new(width: i32, height: i32) -> Screen {
+        Screen { width, height }
     }
     pub fn draw_background<T>(&self, display: &mut T) -> Result<(), T::Error>
     where

@@ -5,12 +5,11 @@ mod character;
 mod pedometer;
 mod screen;
 
-use crate::character::Character;
+use crate::character::{Character, CharacterState};
 use crate::pedometer::Pedometer;
 use crate::screen::Screen;
 
 use accelerometer::Accelerometer;
-use embedded_graphics::{image::ImageRawLE, prelude::*};
 use panic_halt as _;
 use wio_terminal::{
     entry,
@@ -76,12 +75,12 @@ fn main() -> ! {
     Screen::draw_pedometer(&screen, &mut display, &mut pedometer.step_count).unwrap();
 
     // キャラクターの初期化
-    let _character = Character::new();
+    let character = Character::new(CharacterState::Happy);
     Screen::draw_character(
         &screen,
         &mut display,
-        ImageRawLE::new(include_bytes!("./assets/ferris.raw"), 86, 64),
-        Point::new(0, 32),
+        Character::get_image_data(&character),
+        Character::get_point(&character),
     )
     .unwrap();
 

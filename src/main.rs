@@ -79,7 +79,7 @@ fn main() -> ! {
     Screen::draw_character(&screen, &mut display).unwrap();
 
     loop {
-        pedometer.count(accel.accel_norm().unwrap());
+        pedometer.update(accel.accel_norm().unwrap());
         Screen::draw_pedometer(&screen, &mut display, &mut pedometer.step_count).unwrap();
 
         delay.delay_ms(100u16);

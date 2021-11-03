@@ -1,8 +1,13 @@
 use embedded_graphics::{image::ImageRawLE, pixelcolor::Rgb565, prelude::*};
 
 pub enum CharacterState {
-    Happy,
     Angry,
+    Away,
+    Eat,
+    Happy,
+    Play,
+    Shy,
+    Sleep,
 }
 
 pub struct Character {
@@ -14,22 +19,32 @@ impl Character {
         Character { state }
     }
     pub fn get_image_data(&self) -> ImageRawLE<'static, Rgb565> {
-        const WIDTH: u32 = 86;
-        const HEIGHT: u32 = 64;
+        const WIDTH: u32 = 180;
+        const HEIGHT: u32 = 117;
+
+        let data;
 
         match self.state {
-            CharacterState::Happy => {
-                ImageRawLE::new(include_bytes!("./assets/happy.raw"), WIDTH, HEIGHT)
-            }
-            CharacterState::Angry => {
-                ImageRawLE::new(include_bytes!("./assets/angry.raw"), WIDTH, HEIGHT)
-            }
+            CharacterState::Angry => data = include_bytes!("./assets/character/angry/default.raw"),
+            CharacterState::Away => data = include_bytes!("./assets/character/away/default.raw"),
+            CharacterState::Eat => data = include_bytes!("./assets/character/eat/default.raw"),
+            CharacterState::Happy => data = include_bytes!("./assets/character/happy/default.raw"),
+            CharacterState::Play => data = include_bytes!("./assets/character/play/default.raw"),
+            CharacterState::Shy => data = include_bytes!("./assets/character/shy/default.raw"),
+            CharacterState::Sleep => data = include_bytes!("./assets/character/sleep/default.raw"),
         }
+
+        ImageRawLE::new(data, WIDTH, HEIGHT)
     }
     pub fn get_point(&self) -> Point {
         match self.state {
-            CharacterState::Happy => Point::new(0, 32),
-            CharacterState::Angry => Point::new(0, 32),
+            CharacterState::Angry => Point::new(60, 90),
+            CharacterState::Away => Point::new(60, 90),
+            CharacterState::Eat => Point::new(0, 90),
+            CharacterState::Happy => Point::new(60, 90),
+            CharacterState::Play => Point::new(0, 90),
+            CharacterState::Shy => Point::new(60, 90),
+            CharacterState::Sleep => Point::new(60, 90),
         }
     }
 }

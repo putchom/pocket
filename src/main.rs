@@ -75,7 +75,7 @@ fn main() -> ! {
     Screen::draw_pedometer(&screen, &mut display, &mut pedometer.step_count).unwrap();
 
     // キャラクターの初期化
-    let character = Character::new(CharacterState::Happy);
+    let character = Character::new(CharacterState::Sleep);
     Screen::draw_character(
         &screen,
         &mut display,

@@ -1,6 +1,6 @@
 use crate::navigation::NavigationFocus;
 
-use core::fmt::Write;
+use core::{convert::TryInto, fmt::Write};
 use embedded_graphics::{
     egrectangle, egtext,
     fonts::Font24x32,
@@ -40,22 +40,31 @@ impl Screen {
     where
         T: DrawTarget<Rgb565>,
     {
-        const ICON_SIZE: u32 = 32;
+        const ICON_SIZE: i32 = 32;
+
+        // ナビゲーション表示エリアをクリアする
+        egrectangle!(
+            top_left = (0, 0),
+            bottom_right = (self.width / 2, ICON_SIZE),
+            style = primitive_style!(fill_color = Rgb565::WHITE)
+        )
+        .draw(display)?;
+
         match focus {
             NavigationFocus::Home => {}
             NavigationFocus::Clock => {
                 let clock_image_data = ImageRawLE::new(
                     include_bytes!("./assets/navigation/clock.raw"),
-                    ICON_SIZE,
-                    ICON_SIZE,
+                    ICON_SIZE.try_into().unwrap(),
+                    ICON_SIZE.try_into().unwrap(),
                 );
                 Image::new(&clock_image_data, Point::new(0, 0)).draw(display)?;
             }
             NavigationFocus::Eat => {
                 let eat_image_data = ImageRawLE::new(
                     include_bytes!("./assets/navigation/eat.raw"),
-                    ICON_SIZE,
-                    ICON_SIZE,
+                    ICON_SIZE.try_into().unwrap(),
+                    ICON_SIZE.try_into().unwrap(),
                 );
                 Image::new(&eat_image_data, Point::new(36, 0)).draw(display)?;
             }

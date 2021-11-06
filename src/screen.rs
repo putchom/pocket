@@ -1,4 +1,4 @@
-use crate::navigation::NavigationFocus;
+use crate::navigation::Focus;
 
 use core::{convert::TryInto, fmt::Write};
 use embedded_graphics::{
@@ -32,11 +32,7 @@ impl Screen {
         .draw(display)?;
         Ok(())
     }
-    pub fn draw_navigation<T>(
-        &self,
-        display: &mut T,
-        focus: NavigationFocus,
-    ) -> Result<(), T::Error>
+    pub fn draw_navigation<T>(&self, display: &mut T, focus: Focus) -> Result<(), T::Error>
     where
         T: DrawTarget<Rgb565>,
     {
@@ -51,8 +47,8 @@ impl Screen {
         .draw(display)?;
 
         match focus {
-            NavigationFocus::Home => {}
-            NavigationFocus::Clock => {
+            Focus::Home => {}
+            Focus::Clock => {
                 let clock_image_data = ImageRawLE::new(
                     include_bytes!("./assets/navigation/clock.raw"),
                     ICON_SIZE.try_into().unwrap(),
@@ -60,7 +56,7 @@ impl Screen {
                 );
                 Image::new(&clock_image_data, Point::new(0, 0)).draw(display)?;
             }
-            NavigationFocus::Eat => {
+            Focus::Eat => {
                 let eat_image_data = ImageRawLE::new(
                     include_bytes!("./assets/navigation/eat.raw"),
                     ICON_SIZE.try_into().unwrap(),

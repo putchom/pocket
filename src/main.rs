@@ -7,7 +7,7 @@ mod pedometer;
 mod screen;
 
 use crate::character::{Character, CharacterState};
-use crate::navigation::{Navigation, NavigationFocus};
+use crate::navigation::{Direction, Focus, Navigation};
 use crate::pedometer::Pedometer;
 use crate::screen::Screen;
 
@@ -15,7 +15,7 @@ use accelerometer::Accelerometer;
 use panic_halt as _;
 use wio_terminal::{
     entry,
-    hal::{clock::GenericClockController, delay::Delay},
+    hal::{clock::GenericClockController, delay::Delay, pwm::Channel, pwm::Tcc0Pwm, time::Hertz},
     pac::{CorePeripherals, Peripherals},
     prelude::*,
     Pins,
@@ -51,6 +51,35 @@ fn main() -> ! {
         )
         .unwrap();
 
+    // ブザーの初期化
+    let mut buzzer = sets.buzzer.init(
+        &mut clocks,
+        peripherals.TCC0,
+        &mut peripherals.MCLK,
+        &mut sets.port,
+    );
+
+    let max_duty = buzzer.get_max_duty();
+    buzzer.set_duty(Channel::_4, max_duty / 2);
+    buzzer.disable(Channel::_4);
+
+    fn beep<P: Into<Hertz>>(
+        buzzer_pwm: &mut Tcc0Pwm,
+        delay: &mut Delay,
+        frequency: P,
+        duration_ms: u16,
+    ) {
+        buzzer_pwm.set_period(frequency.into());
+        buzzer_pwm.enable(Channel::_4);
+        delay.delay_ms(duration_ms);
+        buzzer_pwm.disable(Channel::_4);
+    }
+
+    // ボタンのGPIOを初期化
+    let switch_y = sets.buttons.switch_y.into_floating_input(&mut sets.port);
+    let switch_b = sets.buttons.switch_b.into_floating_input(&mut sets.port);
+    let switch_z = sets.buttons.switch_z.into_floating_input(&mut sets.port);
+
     // UARTドライバオブジェクトの初期化
     let mut _serial = sets.uart.init(
         &mut clocks,
@@ -73,7 +102,7 @@ fn main() -> ! {
     Screen::draw_background(&screen, &mut display).unwrap();
 
     // ナビゲーションの初期化
-    let navigation = Navigation::new(NavigationFocus::Home);
+    let mut navigation = Navigation::new(Focus::Home);
     Screen::draw_navigation(&screen, &mut display, navigation.focus).unwrap();
 
     // 歩数計の初期化
@@ -91,6 +120,22 @@ fn main() -> ! {
     .unwrap();
 
     loop {
+        if switch_y.is_low().unwrap() {
+            Navigation::update(&mut navigation, Direction::Right);
+            Screen::draw_navigation(&screen, &mut display, navigation.focus).unwrap();
+            beep(&mut buzzer, &mut delay, 800.hz(), 200u16);
+        }
+
+        if switch_b.is_low().unwrap() {
+            Navigation::update(&mut navigation, Direction::Left);
+            Screen::draw_navigation(&screen, &mut display, navigation.focus).unwrap();
+            beep(&mut buzzer, &mut delay, 800.hz(), 200u16);
+        }
+
+        if switch_z.is_low().unwrap() {
+            beep(&mut buzzer, &mut delay, 800.hz(), 200u16);
+        }
+
         pedometer.update(accel.accel_norm().unwrap());
         Screen::draw_pedometer(&screen, &mut display, &mut pedometer.step_count).unwrap();
 

@@ -1,8 +1,10 @@
+use crate::navigation::NavigationFocus;
+
 use core::fmt::Write;
 use embedded_graphics::{
     egrectangle, egtext,
     fonts::Font24x32,
-    image::{Image, ImageRaw},
+    image::{Image, ImageRaw, ImageRawLE},
     pixelcolor::{raw::LittleEndian, Rgb565},
     prelude::*,
     primitive_style, text_style,
@@ -30,6 +32,36 @@ impl Screen {
         .draw(display)?;
         Ok(())
     }
+    pub fn draw_navigation<T>(
+        &self,
+        display: &mut T,
+        focus: NavigationFocus,
+    ) -> Result<(), T::Error>
+    where
+        T: DrawTarget<Rgb565>,
+    {
+        const ICON_SIZE: u32 = 32;
+        match focus {
+            NavigationFocus::Home => {}
+            NavigationFocus::Clock => {
+                let clock_image_data = ImageRawLE::new(
+                    include_bytes!("./assets/navigation/clock.raw"),
+                    ICON_SIZE,
+                    ICON_SIZE,
+                );
+                Image::new(&clock_image_data, Point::new(0, 0)).draw(display)?;
+            }
+            NavigationFocus::Eat => {
+                let eat_image_data = ImageRawLE::new(
+                    include_bytes!("./assets/navigation/eat.raw"),
+                    ICON_SIZE,
+                    ICON_SIZE,
+                );
+                Image::new(&eat_image_data, Point::new(36, 0)).draw(display)?;
+            }
+        }
+        Ok(())
+    }
     pub fn draw_pedometer<T>(&self, display: &mut T, step_count: &mut i32) -> Result<(), T::Error>
     where
         T: DrawTarget<Rgb565>,
@@ -38,7 +70,7 @@ impl Screen {
         const FONT_WIDTH: i32 = 24;
         const FONT_HEIGHT: i32 = 32;
         egrectangle!(
-            top_left = (0, 0),
+            top_left = (self.width / 2, 0),
             bottom_right = (self.width - 1, FONT_HEIGHT),
             style = primitive_style!(fill_color = Rgb565::WHITE)
         )

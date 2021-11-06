@@ -2,10 +2,12 @@
 #![no_main]
 
 mod character;
+mod navigation;
 mod pedometer;
 mod screen;
 
 use crate::character::{Character, CharacterState};
+use crate::navigation::{Navigation, NavigationFocus};
 use crate::pedometer::Pedometer;
 use crate::screen::Screen;
 
@@ -69,6 +71,10 @@ fn main() -> ! {
     // Screenの初期化
     let screen = Screen::new(320, 240);
     Screen::draw_background(&screen, &mut display).unwrap();
+
+    // ナビゲーションの初期化
+    let navigation = Navigation::new(NavigationFocus::Home);
+    Screen::draw_navigation(&screen, &mut display, navigation.focus).unwrap();
 
     // 歩数計の初期化
     let mut pedometer = Pedometer::new();

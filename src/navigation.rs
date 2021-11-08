@@ -1,9 +1,4 @@
-#[derive(Clone, Copy)]
-pub enum Focus {
-    Home,
-    Clock,
-    Eat,
-}
+use crate::router::Route;
 
 pub enum Direction {
     Left,
@@ -11,25 +6,25 @@ pub enum Direction {
 }
 
 pub struct Navigation {
-    pub focus: Focus,
+    pub focus: Route,
 }
 
 impl Navigation {
-    pub fn new(focus: Focus) -> Navigation {
+    pub fn new(focus: Route) -> Navigation {
         Navigation { focus }
     }
     pub fn update(&mut self, direction: Direction) {
         match self.focus {
-            Focus::Home => match direction {
+            Route::Home => match direction {
                 Direction::Left => {}
-                Direction::Right => self.focus = Focus::Clock,
+                Direction::Right => self.focus = Route::Clock,
             },
-            Focus::Clock => match direction {
-                Direction::Left => self.focus = Focus::Home,
-                Direction::Right => self.focus = Focus::Eat,
+            Route::Clock => match direction {
+                Direction::Left => self.focus = Route::Home,
+                Direction::Right => self.focus = Route::Eat,
             },
-            Focus::Eat => match direction {
-                Direction::Left => self.focus = Focus::Clock,
+            Route::Eat => match direction {
+                Direction::Left => self.focus = Route::Clock,
                 Direction::Right => {}
             },
         }

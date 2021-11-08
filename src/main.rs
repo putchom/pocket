@@ -4,11 +4,13 @@
 mod character;
 mod navigation;
 mod pedometer;
+mod router;
 mod screen;
 
 use crate::character::{Character, CharacterState};
-use crate::navigation::{Direction, Focus, Navigation};
+use crate::navigation::{Direction, Navigation};
 use crate::pedometer::Pedometer;
+use crate::router::{Route, Router};
 use crate::screen::Screen;
 
 use accelerometer::Accelerometer;
@@ -101,8 +103,11 @@ fn main() -> ! {
     let screen = Screen::new(320, 240);
     Screen::draw_background(&screen, &mut display).unwrap();
 
+    // Routerの初期化
+    let mut router = Router::new(Route::Home);
+
     // ナビゲーションの初期化
-    let mut navigation = Navigation::new(Focus::Home);
+    let mut navigation = Navigation::new(Route::Home);
     Screen::draw_navigation(&screen, &mut display, navigation.focus).unwrap();
 
     // 歩数計の初期化
@@ -133,6 +138,7 @@ fn main() -> ! {
         }
 
         if switch_z.is_low().unwrap() {
+            Router::update(&mut router, navigation.focus);
             beep(&mut buzzer, &mut delay, 800.hz(), 200u16);
         }
 

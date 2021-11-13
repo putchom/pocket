@@ -78,7 +78,9 @@ fn main() -> ! {
     }
 
     // ボタンのGPIOを初期化
+    let switch_x = sets.buttons.switch_x.into_floating_input(&mut sets.port);
     let switch_y = sets.buttons.switch_y.into_floating_input(&mut sets.port);
+    let switch_u = sets.buttons.switch_u.into_floating_input(&mut sets.port);
     let switch_b = sets.buttons.switch_b.into_floating_input(&mut sets.port);
     let switch_z = sets.buttons.switch_z.into_floating_input(&mut sets.port);
 
@@ -127,10 +129,22 @@ fn main() -> ! {
     .unwrap();
 
     loop {
+        if switch_x.is_low().unwrap() {
+            if router.route == Route::Eat {
+                beep(&mut buzzer, &mut delay, 800.hz(), 200u16);
+            }
+        }
+
         if switch_y.is_low().unwrap() {
             beep(&mut buzzer, &mut delay, 800.hz(), 200u16);
             Navigation::update(&mut navigation, Direction::Right);
             Screen::draw_navigation(&screen, &mut display, navigation.focus).unwrap();
+        }
+
+        if switch_u.is_low().unwrap() {
+            if router.route == Route::Eat {
+                beep(&mut buzzer, &mut delay, 800.hz(), 200u16);
+            }
         }
 
         if switch_b.is_low().unwrap() {

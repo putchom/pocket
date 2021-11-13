@@ -3,7 +3,7 @@ use embedded_graphics::{image::ImageRawLE, pixelcolor::Rgb565, prelude::*};
 pub enum CharacterState {
     Angry,
     Away,
-    Eat,
+    Food,
     Happy,
     Play,
     Shy,
@@ -25,7 +25,7 @@ impl Character {
         let data = match self.state {
             CharacterState::Angry => include_bytes!("./assets/character/angry/default.raw"),
             CharacterState::Away => include_bytes!("./assets/character/away/default.raw"),
-            CharacterState::Eat => include_bytes!("./assets/character/eat/default.raw"),
+            CharacterState::Food => include_bytes!("./assets/character/food/default.raw"),
             CharacterState::Happy => include_bytes!("./assets/character/happy/default.raw"),
             CharacterState::Play => include_bytes!("./assets/character/play/default.raw"),
             CharacterState::Shy => include_bytes!("./assets/character/shy/default.raw"),
@@ -38,7 +38,7 @@ impl Character {
         match self.state {
             CharacterState::Angry => Point::new(60, 90),
             CharacterState::Away => Point::new(60, 90),
-            CharacterState::Eat => Point::new(0, 90),
+            CharacterState::Food => Point::new(0, 90),
             CharacterState::Happy => Point::new(60, 90),
             CharacterState::Play => Point::new(0, 90),
             CharacterState::Shy => Point::new(60, 90),

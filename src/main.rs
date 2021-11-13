@@ -130,7 +130,7 @@ fn main() -> ! {
 
     loop {
         if switch_x.is_low().unwrap() {
-            if router.route == Route::Eat {
+            if router.route == Route::Food {
                 beep(&mut buzzer, &mut delay, 800.hz(), 200u16);
             }
         }
@@ -142,7 +142,7 @@ fn main() -> ! {
         }
 
         if switch_u.is_low().unwrap() {
-            if router.route == Route::Eat {
+            if router.route == Route::Food {
                 beep(&mut buzzer, &mut delay, 800.hz(), 200u16);
             }
         }

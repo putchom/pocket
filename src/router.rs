@@ -1,7 +1,7 @@
 #[derive(Clone, Copy, PartialEq)]
 pub enum Route {
     Home,
-    Eat,
+    Food,
 }
 
 pub struct Router {

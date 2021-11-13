@@ -57,7 +57,7 @@ impl Screen {
 
         let data = match focus {
             Route::Home => include_bytes!("./assets/navigation/home.raw"),
-            Route::Eat => include_bytes!("./assets/navigation/eat.raw"),
+            Route::Food => include_bytes!("./assets/navigation/food.raw"),
         };
 
         let image_data = ImageRawLE::new(
@@ -68,7 +68,7 @@ impl Screen {
 
         let point = match focus {
             Route::Home => Point::new(0, 0),
-            Route::Eat => Point::new(ICON_SIZE, 0),
+            Route::Food => Point::new(ICON_SIZE, 0),
         };
 
         Image::new(&image_data, point).draw(display)?;
@@ -118,7 +118,7 @@ impl Screen {
         Image::new(&image_data, position).draw(display)?;
         Ok(())
     }
-    fn draw_eat_page<T>(
+    fn draw_food_page<T>(
         &self,
         display: &mut T,
     ) -> Result<(), T::Error>
@@ -153,8 +153,8 @@ impl Screen {
             Route::Home => {
                 self.draw_home_page(display, character)
             },
-            Route::Eat => {
-                self.draw_eat_page(display)
+            Route::Food => {
+                self.draw_food_page(display)
             }
         }
     }

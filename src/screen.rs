@@ -58,7 +58,6 @@ impl Screen {
 
         let data = match focus {
             Route::Home => include_bytes!("./assets/navigation/home.raw"),
-            Route::Clock => include_bytes!("./assets/navigation/clock.raw"),
             Route::Eat => include_bytes!("./assets/navigation/eat.raw"),
         };
 
@@ -70,8 +69,7 @@ impl Screen {
 
         let point = match focus {
             Route::Home => Point::new(0, 0),
-            Route::Clock => Point::new(36, 0),
-            Route::Eat => Point::new(72, 0),
+            Route::Eat => Point::new(36, 0),
         };
 
         Image::new(&image_data, point).draw(display)?;
@@ -122,20 +120,6 @@ impl Screen {
         Image::new(&image_data, position).draw(display)?;
         Ok(())
     }
-    fn draw_clock_page<T>(
-        &self,
-        display: &mut T,
-    ) -> Result<(), T::Error>
-    where
-        T: DrawTarget<Rgb565>,
-    {
-        egtext!(
-            text = "Clock",
-            top_left = (0, self.status_bar_height),
-            style = text_style!(font = Font24x32, text_color = self.foreground_color)
-        ).draw(display)?;
-        Ok(())
-    }
     fn draw_eat_page<T>(
         &self,
         display: &mut T,
@@ -171,9 +155,6 @@ impl Screen {
             Route::Home => {
                 self.draw_home_page(display, character)
             },
-            Route::Clock => {
-                self.draw_clock_page(display)
-            }
             Route::Eat => {
                 self.draw_eat_page(display)
             }

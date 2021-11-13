@@ -17,14 +17,10 @@ impl Navigation {
         match self.focus {
             Route::Home => match direction {
                 Direction::Left => {}
-                Direction::Right => self.focus = Route::Clock,
-            },
-            Route::Clock => match direction {
-                Direction::Left => self.focus = Route::Home,
                 Direction::Right => self.focus = Route::Eat,
             },
             Route::Eat => match direction {
-                Direction::Left => self.focus = Route::Clock,
+                Direction::Left => self.focus = Route::Home,
                 Direction::Right => {}
             },
         }

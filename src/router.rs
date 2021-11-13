@@ -1,7 +1,6 @@
 #[derive(Clone, Copy, PartialEq)]
 pub enum Route {
     Home,
-    Clock,
     Eat,
 }
 

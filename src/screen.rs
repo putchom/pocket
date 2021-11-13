@@ -12,12 +12,16 @@ use embedded_graphics::{
 };
 use heapless::{consts::*, String};
 
+const ICON_SIZE: i32 = 32;
+const FONT_WIDTH: i32 = 24;
+const FONT_HEIGHT: i32 = 32;
+const STATUS_BAR_HEIGHT: i32 = 32;
+const BACKGROUND_COLOR: Rgb565 = Rgb565::WHITE;
+const FOREGROUND_COLOR: Rgb565 = Rgb565::BLACK;
+
 pub struct Screen {
     pub width: i32,
     pub height: i32,
-    pub status_bar_height: i32,
-    pub background_color: Rgb565,
-    pub foreground_color: Rgb565
 }
 
 impl Screen {
@@ -25,9 +29,6 @@ impl Screen {
         Screen {
             width,
             height,
-            status_bar_height: 32,
-            background_color: Rgb565::WHITE,
-            foreground_color: Rgb565::BLACK
         }
     }
     pub fn draw_background<T>(&self, display: &mut T) -> Result<(), T::Error>
@@ -37,7 +38,7 @@ impl Screen {
         egrectangle!(
             top_left = (0, 0),
             bottom_right = (self.width - 1, self.height - 1),
-            style = primitive_style!(fill_color = self.background_color)
+            style = primitive_style!(fill_color = BACKGROUND_COLOR)
         )
         .draw(display)?;
         Ok(())
@@ -46,13 +47,11 @@ impl Screen {
     where
         T: DrawTarget<Rgb565>,
     {
-        const NAVIGATION_ICON_SIZE: i32 = 32;
-
         // ナビゲーション表示エリアをクリアする
         egrectangle!(
             top_left = (0, 0),
-            bottom_right = (self.width / 2, self.status_bar_height),
-            style = primitive_style!(fill_color = self.background_color)
+            bottom_right = (self.width / 2, STATUS_BAR_HEIGHT),
+            style = primitive_style!(fill_color = BACKGROUND_COLOR)
         )
         .draw(display)?;
 
@@ -63,8 +62,8 @@ impl Screen {
 
         let image_data = ImageRawLE::new(
             data,
-            NAVIGATION_ICON_SIZE.try_into().unwrap(),
-            NAVIGATION_ICON_SIZE.try_into().unwrap(),
+            ICON_SIZE.try_into().unwrap(),
+            ICON_SIZE.try_into().unwrap(),
         );
 
         let point = match focus {
@@ -80,11 +79,10 @@ impl Screen {
         T: DrawTarget<Rgb565>,
     {
         // カウント表示エリアをクリアする
-        const FONT_WIDTH: i32 = 24;
         egrectangle!(
             top_left = (self.width / 2, 0),
-            bottom_right = (self.width - 1, self.status_bar_height),
-            style = primitive_style!(fill_color = self.background_color)
+            bottom_right = (self.width - 1, FONT_HEIGHT),
+            style = primitive_style!(fill_color = BACKGROUND_COLOR)
         )
         .draw(display)?;
 
@@ -101,7 +99,7 @@ impl Screen {
         egtext!(
             text = textbuffer.as_str(),
             top_left = (left, 0),
-            style = text_style!(font = Font24x32, text_color = self.foreground_color)
+            style = text_style!(font = Font24x32, text_color = FOREGROUND_COLOR)
         )
         .draw(display)?;
         Ok(())
@@ -128,9 +126,9 @@ impl Screen {
         T: DrawTarget<Rgb565>,
     {
         egtext!(
-            text = "Eat",
-            top_left = (0, self.status_bar_height),
-            style = text_style!(font = Font24x32, text_color = self.foreground_color)
+            text = "How many ?",
+            top_left = (0, STATUS_BAR_HEIGHT),
+            style = text_style!(font = Font24x32, text_color = FOREGROUND_COLOR)
         ).draw(display)?;
         Ok(())
     }
@@ -145,9 +143,9 @@ impl Screen {
     {
         // ページエリアをクリアする
         egrectangle!(
-            top_left = (0, self.status_bar_height),
+            top_left = (0, STATUS_BAR_HEIGHT),
             bottom_right = (self.width - 1, self.height - 1),
-            style = primitive_style!(fill_color = self.background_color)
+            style = primitive_style!(fill_color = BACKGROUND_COLOR)
         )
         .draw(display)?;
 

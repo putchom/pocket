@@ -115,31 +115,40 @@ fn main() -> ! {
     Screen::draw_pedometer(&screen, &mut display, &mut pedometer.step_count).unwrap();
 
     // キャラクターの初期化
-    let character = Character::new(CharacterState::Sleep);
-    Screen::draw_character(
+    let mut character = Character::new(CharacterState::Sleep);
+
+    // ページの初期化
+    Screen::draw_page(
         &screen,
         &mut display,
-        Character::get_image_data(&character),
-        Character::get_point(&character),
+        router.route,
+        &mut character
     )
     .unwrap();
 
     loop {
         if switch_y.is_low().unwrap() {
+            beep(&mut buzzer, &mut delay, 800.hz(), 200u16);
             Navigation::update(&mut navigation, Direction::Right);
             Screen::draw_navigation(&screen, &mut display, navigation.focus).unwrap();
-            beep(&mut buzzer, &mut delay, 800.hz(), 200u16);
         }
 
         if switch_b.is_low().unwrap() {
+            beep(&mut buzzer, &mut delay, 800.hz(), 200u16);
             Navigation::update(&mut navigation, Direction::Left);
             Screen::draw_navigation(&screen, &mut display, navigation.focus).unwrap();
-            beep(&mut buzzer, &mut delay, 800.hz(), 200u16);
         }
 
         if switch_z.is_low().unwrap() {
-            Router::update(&mut router, navigation.focus);
             beep(&mut buzzer, &mut delay, 800.hz(), 200u16);
+            Router::update(&mut router, navigation.focus);
+            Screen::draw_page(
+                &screen,
+                &mut display,
+                router.route,
+                &mut character
+            )
+            .unwrap();
         }
 
         pedometer.update(accel.accel_norm().unwrap());

@@ -68,7 +68,7 @@ impl Screen {
 
         let point = match focus {
             Route::Home => Point::new(0, 0),
-            Route::Eat => Point::new(36, 0),
+            Route::Eat => Point::new(ICON_SIZE, 0),
         };
 
         Image::new(&image_data, point).draw(display)?;

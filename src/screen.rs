@@ -56,25 +56,25 @@ impl Screen {
         )
         .draw(display)?;
 
-        match focus {
-            Route::Home => {}
-            Route::Clock => {
-                let clock_image_data = ImageRawLE::new(
-                    include_bytes!("./assets/navigation/clock.raw"),
-                    NAVIGATION_ICON_SIZE.try_into().unwrap(),
-                    NAVIGATION_ICON_SIZE.try_into().unwrap(),
-                );
-                Image::new(&clock_image_data, Point::new(0, 0)).draw(display)?;
-            }
-            Route::Eat => {
-                let eat_image_data = ImageRawLE::new(
-                    include_bytes!("./assets/navigation/eat.raw"),
-                    NAVIGATION_ICON_SIZE.try_into().unwrap(),
-                    NAVIGATION_ICON_SIZE.try_into().unwrap(),
-                );
-                Image::new(&eat_image_data, Point::new(36, 0)).draw(display)?;
-            }
-        }
+        let data = match focus {
+            Route::Home => include_bytes!("./assets/navigation/home.raw"),
+            Route::Clock => include_bytes!("./assets/navigation/clock.raw"),
+            Route::Eat => include_bytes!("./assets/navigation/eat.raw"),
+        };
+
+        let image_data = ImageRawLE::new(
+            data,
+            NAVIGATION_ICON_SIZE.try_into().unwrap(),
+            NAVIGATION_ICON_SIZE.try_into().unwrap(),
+        );
+
+        let point = match focus {
+            Route::Home => Point::new(0, 0),
+            Route::Clock => Point::new(36, 0),
+            Route::Eat => Point::new(72, 0),
+        };
+
+        Image::new(&image_data, point).draw(display)?;
         Ok(())
     }
     pub fn draw_pedometer<T>(&self, display: &mut T, step_count: &mut i32) -> Result<(), T::Error>

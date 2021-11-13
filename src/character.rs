@@ -12,11 +12,17 @@ pub enum CharacterState {
 
 pub struct Character {
     pub state: CharacterState,
+    pub intimacy: i32,
+    pub hunger: i32,
 }
 
 impl Character {
     pub fn new(state: CharacterState) -> Character {
-        Character { state }
+        Character {
+            state,
+            intimacy: 0,
+            hunger: 10,
+        }
     }
     pub fn get_image_data(&self) -> ImageRawLE<'static, Rgb565> {
         const WIDTH: u32 = 180;

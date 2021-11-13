@@ -140,15 +140,19 @@ fn main() -> ! {
         }
 
         if switch_z.is_low().unwrap() {
-            beep(&mut buzzer, &mut delay, 800.hz(), 200u16);
-            Router::update(&mut router, navigation.focus);
-            Screen::draw_page(
-                &screen,
-                &mut display,
-                router.route,
-                &mut character
-            )
-            .unwrap();
+            if router.route != navigation.focus {
+                beep(&mut buzzer, &mut delay, 800.hz(), 200u16);
+                Router::update(&mut router, navigation.focus);
+                Screen::draw_page(
+                    &screen,
+                    &mut display,
+                    router.route,
+                    &mut character
+                )
+                .unwrap();
+            } else {
+                beep(&mut buzzer, &mut delay, 800.hz(), 200u16);
+            }
         }
 
         pedometer.update(accel.accel_norm().unwrap());

@@ -1,5 +1,6 @@
-use crate::router::Route;
 use crate::character::Character;
+use crate::food::Food;
+use crate::router::Route;
 
 use core::{convert::TryInto, fmt::Write};
 use embedded_graphics::{
@@ -106,53 +107,9 @@ impl Screen {
         .draw(display)?;
         Ok(())
     }
-    fn draw_home_page<T>(
+    fn clear_page<T>(
         &self,
         display: &mut T,
-        character: &mut Character
-    ) -> Result<(), T::Error>
-    where
-        T: DrawTarget<Rgb565>,
-    {
-        let image_data = Character::get_image_data(&character);
-        let position = Character::get_point(&character);
-
-        Image::new(&image_data, position).draw(display)?;
-        Ok(())
-    }
-    fn draw_food_page<T>(
-        &self,
-        display: &mut T,
-    ) -> Result<(), T::Error>
-    where
-        T: DrawTarget<Rgb565>,
-    {
-        egtext!(
-            text = "How many ?",
-            top_left = (0, STATUS_BAR_HEIGHT),
-            style = text_style!(font = Font24x32, text_color = FOREGROUND_COLOR)
-        ).draw(display)?;
-        Ok(())
-    }
-    fn draw_play_page<T>(
-        &self,
-        display: &mut T,
-    ) -> Result<(), T::Error>
-    where
-        T: DrawTarget<Rgb565>,
-    {
-        egtext!(
-            text = "Play",
-            top_left = (0, STATUS_BAR_HEIGHT),
-            style = text_style!(font = Font24x32, text_color = FOREGROUND_COLOR)
-        ).draw(display)?;
-        Ok(())
-    }
-    pub fn draw_page<T>(
-        &self,
-        display: &mut T,
-        route: Route,
-        character: &mut Character
     ) -> Result<(), T::Error>
     where
         T: DrawTarget<Rgb565>,
@@ -164,17 +121,67 @@ impl Screen {
             style = primitive_style!(fill_color = BACKGROUND_COLOR)
         )
         .draw(display)?;
+        Ok(())
+    }
+    pub fn draw_home_page<T>(
+        &self,
+        display: &mut T,
+        character: &mut Character
+    ) -> Result<(), T::Error>
+    where
+        T: DrawTarget<Rgb565>,
+    {
+        self.clear_page(display)?;
 
-        match route {
-            Route::Home => {
-                self.draw_home_page(display, character)
-            },
-            Route::Food => {
-                self.draw_food_page(display)
-            }
-            Route::Play => {
-                self.draw_play_page(display)
-            }
-        }
+        let image_data = Character::get_image_data(&character);
+        let position = Character::get_point(&character);
+
+        Image::new(&image_data, position).draw(display)?;
+        Ok(())
+    }
+    pub fn draw_food_page<T>(
+        &self,
+        display: &mut T,
+        food: &Food
+    ) -> Result<(), T::Error>
+    where
+        T: DrawTarget<Rgb565>,
+    {
+        self.clear_page(display)?;
+
+        egtext!(
+            text = "How many ?",
+            top_left = (0, STATUS_BAR_HEIGHT),
+            style = text_style!(font = Font24x32, text_color = FOREGROUND_COLOR)
+        ).draw(display)?;
+
+        let mut textbuffer = String::<U256>::new();
+        write!(&mut textbuffer, "{:.2}", food.value).unwrap();
+
+        // 個数を描画する
+        egtext!(
+            text = textbuffer.as_str(),
+            top_left = (0, STATUS_BAR_HEIGHT + FONT_HEIGHT),
+            style = text_style!(font = Font24x32, text_color = FOREGROUND_COLOR)
+        )
+        .draw(display)?;
+
+        Ok(())
+    }
+    pub fn draw_play_page<T>(
+        &self,
+        display: &mut T,
+    ) -> Result<(), T::Error>
+    where
+        T: DrawTarget<Rgb565>,
+    {
+        self.clear_page(display)?;
+
+        egtext!(
+            text = "Play",
+            top_left = (0, STATUS_BAR_HEIGHT),
+            style = text_style!(font = Font24x32, text_color = FOREGROUND_COLOR)
+        ).draw(display)?;
+        Ok(())
     }
 }

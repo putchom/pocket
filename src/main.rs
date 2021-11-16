@@ -2,6 +2,7 @@
 #![no_main]
 
 mod character;
+mod food;
 mod helper;
 mod navigation;
 mod pedometer;
@@ -9,6 +10,7 @@ mod router;
 mod screen;
 
 use crate::character::{Character, CharacterState};
+use crate::food::Food;
 use crate::helper::beep;
 use crate::navigation::{Direction, Navigation};
 use crate::pedometer::Pedometer;
@@ -19,7 +21,7 @@ use accelerometer::Accelerometer;
 use panic_halt as _;
 use wio_terminal::{
     entry,
-    hal::{clock::GenericClockController, delay::Delay, pwm::Channel, pwm::Tcc0Pwm, time::Hertz},
+    hal::{clock::GenericClockController, delay::Delay, pwm::Channel},
     pac::{CorePeripherals, Peripherals},
     prelude::*,
     Pins,
@@ -109,10 +111,9 @@ fn main() -> ! {
     let mut character = Character::new(CharacterState::Sleep);
 
     // ページの初期化
-    Screen::draw_page(
+    Screen::draw_home_page(
         &screen,
         &mut display,
-        router.route,
         &mut character
     )
     .unwrap();
@@ -160,30 +161,47 @@ fn main() -> ! {
 
         // 押し込み
         if switch_z.is_low().unwrap() {
+            beep(&mut buzzer, &mut delay, 800.hz(), 200u16);
             // 違うページを選択した状態で押し込んだとき
             if router.route != navigation.focus {
-                beep(&mut buzzer, &mut delay, 800.hz(), 200u16);
                 Router::update(&mut router, navigation.focus);
-                Screen::draw_page(
-                    &screen,
-                    &mut display,
-                    router.route,
-                    &mut character
-                )
-                .unwrap();
+                match router.route {
+                    Route::Home => {
+                        Screen::draw_home_page(
+                            &screen,
+                            &mut display,
+                            &mut character
+                        )
+                        .unwrap();
+                    },
+                    Route::Food => {
+                        let value = if pedometer.step_count > 0 { 1 } else { 0 };
+                        let food = Food::new(pedometer.step_count, value);
+                        Screen::draw_food_page(
+                            &screen,
+                            &mut display,
+                            &food,
+                        )
+                        .unwrap();
+                    },
+                    Route::Play => {
+                        Screen::draw_play_page(
+                            &screen,
+                            &mut display,
+                        )
+                        .unwrap();
+                    },
+                }
             // 同一のページを選択した状態で押し込んだとき
             } else {
                 match router.route {
                     Route::Home => {
-                        beep(&mut buzzer, &mut delay, 800.hz(), 200u16);
                         // TODO: ふれあい
                     },
                     Route::Food => {
-                        beep(&mut buzzer, &mut delay, 800.hz(), 200u16);
                         // TODO: 食事の量を決定して与える
                     },
                     Route::Play => {
-                        beep(&mut buzzer, &mut delay, 800.hz(), 200u16);
                         // TODO: 遊ぶ
                     },
                 }

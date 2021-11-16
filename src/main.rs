@@ -110,6 +110,9 @@ fn main() -> ! {
     // キャラクターの初期化
     let mut character = Character::new(CharacterState::Sleep);
 
+    // 食事の初期化
+    let mut food = Food::new(0);
+
     // ページの初期化
     Screen::draw_home_page(
         &screen,
@@ -119,13 +122,20 @@ fn main() -> ! {
     .unwrap();
 
     loop {
-        // 上
+        // 下
         if switch_x.is_low().unwrap() {
             match router.route {
                 Route::Home => {},
                 Route::Food => {
                     beep(&mut buzzer, &mut delay, 800.hz(), 200u16);
-                    // TODO: 食事の量を増やす
+                    // 食事の量を減らす
+                    Food::decrease(&mut food);
+                    Screen::draw_food_page(
+                        &screen,
+                        &mut display,
+                        &food,
+                    )
+                    .unwrap();
                 },
                 Route::Play => {},
             }
@@ -139,13 +149,20 @@ fn main() -> ! {
             Screen::draw_navigation(&screen, &mut display, navigation.focus).unwrap();
         }
 
-        // 下
+        // 上
         if switch_u.is_low().unwrap() {
             match router.route {
                 Route::Home => {},
                 Route::Food => {
                     beep(&mut buzzer, &mut delay, 800.hz(), 200u16);
-                    // TODO: 食事の量を減らす
+                    // 食事の量を増やす
+                    Food::increase(&mut food, pedometer.step_count);
+                    Screen::draw_food_page(
+                        &screen,
+                        &mut display,
+                        &food,
+                    )
+                    .unwrap();
                 },
                 Route::Play => {},
             }
@@ -175,8 +192,6 @@ fn main() -> ! {
                         .unwrap();
                     },
                     Route::Food => {
-                        let value = if pedometer.step_count > 0 { 1 } else { 0 };
-                        let food = Food::new(pedometer.step_count, value);
                         Screen::draw_food_page(
                             &screen,
                             &mut display,

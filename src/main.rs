@@ -118,31 +118,49 @@ fn main() -> ! {
     .unwrap();
 
     loop {
+        // 上
         if switch_x.is_low().unwrap() {
-            if router.route == Route::Food {
-                beep(&mut buzzer, &mut delay, 800.hz(), 200u16);
+            match router.route {
+                Route::Home => {},
+                Route::Food => {
+                    beep(&mut buzzer, &mut delay, 800.hz(), 200u16);
+                    // TODO: 食事の量を増やす
+                },
+                Route::Play => {},
             }
         }
 
+        // 右
         if switch_y.is_low().unwrap() {
+            // ナビゲーションを右に移動する
             beep(&mut buzzer, &mut delay, 800.hz(), 200u16);
             Navigation::update(&mut navigation, Direction::Right);
             Screen::draw_navigation(&screen, &mut display, navigation.focus).unwrap();
         }
 
+        // 下
         if switch_u.is_low().unwrap() {
-            if router.route == Route::Food {
-                beep(&mut buzzer, &mut delay, 800.hz(), 200u16);
+            match router.route {
+                Route::Home => {},
+                Route::Food => {
+                    beep(&mut buzzer, &mut delay, 800.hz(), 200u16);
+                    // TODO: 食事の量を減らす
+                },
+                Route::Play => {},
             }
         }
 
+        // 左
         if switch_b.is_low().unwrap() {
+            // ナビゲーションを左に移動する
             beep(&mut buzzer, &mut delay, 800.hz(), 200u16);
             Navigation::update(&mut navigation, Direction::Left);
             Screen::draw_navigation(&screen, &mut display, navigation.focus).unwrap();
         }
 
+        // 押し込み
         if switch_z.is_low().unwrap() {
+            // 違うページを選択した状態で押し込んだとき
             if router.route != navigation.focus {
                 beep(&mut buzzer, &mut delay, 800.hz(), 200u16);
                 Router::update(&mut router, navigation.focus);
@@ -153,8 +171,22 @@ fn main() -> ! {
                     &mut character
                 )
                 .unwrap();
+            // 同一のページを選択した状態で押し込んだとき
             } else {
-                beep(&mut buzzer, &mut delay, 800.hz(), 200u16);
+                match router.route {
+                    Route::Home => {
+                        beep(&mut buzzer, &mut delay, 800.hz(), 200u16);
+                        // TODO: ふれあい
+                    },
+                    Route::Food => {
+                        beep(&mut buzzer, &mut delay, 800.hz(), 200u16);
+                        // TODO: 食事の量を決定して与える
+                    },
+                    Route::Play => {
+                        beep(&mut buzzer, &mut delay, 800.hz(), 200u16);
+                        // TODO: 遊ぶ
+                    },
+                }
             }
         }
 

@@ -2,12 +2,14 @@
 #![no_main]
 
 mod character;
+mod helper;
 mod navigation;
 mod pedometer;
 mod router;
 mod screen;
 
 use crate::character::{Character, CharacterState};
+use crate::helper::beep;
 use crate::navigation::{Direction, Navigation};
 use crate::pedometer::Pedometer;
 use crate::router::{Route, Router};
@@ -60,22 +62,9 @@ fn main() -> ! {
         &mut peripherals.MCLK,
         &mut sets.port,
     );
-
     let max_duty = buzzer.get_max_duty();
     buzzer.set_duty(Channel::_4, max_duty / 2);
     buzzer.disable(Channel::_4);
-
-    fn beep<P: Into<Hertz>>(
-        buzzer_pwm: &mut Tcc0Pwm,
-        delay: &mut Delay,
-        frequency: P,
-        duration_ms: u16,
-    ) {
-        buzzer_pwm.set_period(frequency.into());
-        buzzer_pwm.enable(Channel::_4);
-        delay.delay_ms(duration_ms);
-        buzzer_pwm.disable(Channel::_4);
-    }
 
     // ボタンのGPIOを初期化
     let switch_x = sets.buttons.switch_x.into_floating_input(&mut sets.port);

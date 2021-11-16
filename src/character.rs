@@ -1,3 +1,5 @@
+use crate::food::Food;
+
 use embedded_graphics::{image::ImageRawLE, pixelcolor::Rgb565, prelude::*};
 
 pub enum CharacterState {
@@ -13,7 +15,6 @@ pub enum CharacterState {
 pub struct Character {
     pub state: CharacterState,
     pub intimacy: i32,
-    pub hunger: i32,
 }
 
 impl Character {
@@ -21,8 +22,12 @@ impl Character {
         Character {
             state,
             intimacy: 0,
-            hunger: 10,
         }
+    }
+    pub fn eat(&mut self, food: &mut Food) {
+        // TODO: 一旦雑に食事量をそのまま親密度に足す
+        self.intimacy += food.amount;
+        food.amount = 0;
     }
     pub fn get_image_data(&self) -> ImageRawLE<'static, Rgb565> {
         const WIDTH: u32 = 180;

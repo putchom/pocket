@@ -214,7 +214,8 @@ fn main() -> ! {
                         // TODO: ふれあい
                     },
                     Route::Food => {
-                        // TODO: 食事の量を決定して与える
+                        // 食事の量を決定して食べる
+                        Character::eat(&mut character, &mut food);
                     },
                     Route::Play => {
                         // TODO: 遊ぶ

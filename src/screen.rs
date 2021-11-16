@@ -156,7 +156,7 @@ impl Screen {
         ).draw(display)?;
 
         let mut textbuffer = String::<U256>::new();
-        write!(&mut textbuffer, "{:.2}", food.value).unwrap();
+        write!(&mut textbuffer, "{:.2}", food.amount).unwrap();
 
         // 個数を描画する
         egtext!(

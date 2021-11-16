@@ -1,22 +1,21 @@
 pub struct Food {
-    pub value: i32,
+    pub amount: i32,
 }
 
 impl Food {
-    pub fn new(value: i32) -> Food {
+    pub fn new(amount: i32) -> Food {
         Food {
-            value
+            amount
         }
     }
     pub fn increase(&mut self, max: i32) {
-        if self.value < max {
-            self.value += 1;
+        if self.amount < max {
+            self.amount += 1;
         }
     }
-
     pub fn decrease(&mut self) {
-        if self.value > 0 {
-            self.value -= 1;
+        if self.amount > 0 {
+            self.amount -= 1;
         }
     }
 }

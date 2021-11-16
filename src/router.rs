@@ -2,6 +2,7 @@
 pub enum Route {
     Home,
     Food,
+    Play,
 }
 
 pub struct Router {

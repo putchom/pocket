@@ -21,6 +21,10 @@ impl Navigation {
             },
             Route::Food => match direction {
                 Direction::Left => self.focus = Route::Home,
+                Direction::Right => self.focus = Route::Play
+            },
+            Route::Play => match direction {
+                Direction::Left => self.focus = Route::Food,
                 Direction::Right => {}
             },
         }

@@ -58,6 +58,7 @@ impl Screen {
         let data = match focus {
             Route::Home => include_bytes!("./assets/navigation/home.raw"),
             Route::Food => include_bytes!("./assets/navigation/food.raw"),
+            Route::Play => include_bytes!("./assets/navigation/play.raw"),
         };
 
         let image_data = ImageRawLE::new(
@@ -69,6 +70,7 @@ impl Screen {
         let point = match focus {
             Route::Home => Point::new(0, 0),
             Route::Food => Point::new(ICON_SIZE, 0),
+            Route::Play => Point::new(ICON_SIZE * 2, 0),
         };
 
         Image::new(&image_data, point).draw(display)?;
@@ -132,6 +134,20 @@ impl Screen {
         ).draw(display)?;
         Ok(())
     }
+    fn draw_play_page<T>(
+        &self,
+        display: &mut T,
+    ) -> Result<(), T::Error>
+    where
+        T: DrawTarget<Rgb565>,
+    {
+        egtext!(
+            text = "Play",
+            top_left = (0, STATUS_BAR_HEIGHT),
+            style = text_style!(font = Font24x32, text_color = FOREGROUND_COLOR)
+        ).draw(display)?;
+        Ok(())
+    }
     pub fn draw_page<T>(
         &self,
         display: &mut T,
@@ -155,6 +171,9 @@ impl Screen {
             },
             Route::Food => {
                 self.draw_food_page(display)
+            }
+            Route::Play => {
+                self.draw_play_page(display)
             }
         }
     }

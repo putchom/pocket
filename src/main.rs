@@ -2,19 +2,22 @@
 #![no_main]
 
 mod character;
-mod food;
+mod character_image;
+mod meal;
 mod helper;
 mod navigation;
 mod pedometer;
+mod rice_ball;
 mod router;
 mod screen;
 
-use crate::character::{Character, CharacterState};
-use crate::food::Food;
+use crate::character::Character;
+use crate::meal::Meal;
 use crate::helper::beep;
 use crate::navigation::{Direction, Navigation};
 use crate::pedometer::Pedometer;
 use crate::router::{Route, Router};
+use crate::rice_ball::RiceBall;
 use crate::screen::Screen;
 
 use accelerometer::Accelerometer;
@@ -108,16 +111,18 @@ fn main() -> ! {
     Screen::draw_pedometer(&screen, &mut display, &mut pedometer.step_count).unwrap();
 
     // キャラクターの初期化
-    let mut character = Character::new(CharacterState::Sleep);
+    let mut character = Character::new();
+
+    // おにぎりの初期化
+    let mut rice_ball = RiceBall::new();
 
     // 食事の初期化
-    let mut food = Food::new(0);
+    let mut meal = Meal::new();
 
     // ページの初期化
     Screen::draw_home_page(
         &screen,
         &mut display,
-        &mut character
     )
     .unwrap();
 
@@ -126,14 +131,15 @@ fn main() -> ! {
         if switch_x.is_low().unwrap() {
             match router.route {
                 Route::Home => {},
-                Route::Food => {
+                Route::Meal => {
                     beep(&mut buzzer, &mut delay, 800.hz(), 200u16);
                     // 食事の量を減らす
-                    Food::decrease(&mut food);
-                    Screen::draw_food_page(
+                    Meal::decrease(&mut meal);
+                    Screen::draw_meal_page(
                         &screen,
                         &mut display,
-                        &food,
+                        &rice_ball,
+                        &meal,
                     )
                     .unwrap();
                 },
@@ -153,14 +159,15 @@ fn main() -> ! {
         if switch_u.is_low().unwrap() {
             match router.route {
                 Route::Home => {},
-                Route::Food => {
+                Route::Meal => {
                     beep(&mut buzzer, &mut delay, 800.hz(), 200u16);
                     // 食事の量を増やす
-                    Food::increase(&mut food, pedometer.step_count);
-                    Screen::draw_food_page(
+                    Meal::increase(&mut meal, rice_ball.amount);
+                    Screen::draw_meal_page(
                         &screen,
                         &mut display,
-                        &food,
+                        &rice_ball,
+                        &meal,
                     )
                     .unwrap();
                 },
@@ -187,15 +194,15 @@ fn main() -> ! {
                         Screen::draw_home_page(
                             &screen,
                             &mut display,
-                            &mut character
                         )
                         .unwrap();
                     },
-                    Route::Food => {
-                        Screen::draw_food_page(
+                    Route::Meal => {
+                        Screen::draw_meal_page(
                             &screen,
                             &mut display,
-                            &food,
+                            &rice_ball,
+                            &meal,
                         )
                         .unwrap();
                     },
@@ -213,9 +220,20 @@ fn main() -> ! {
                     Route::Home => {
                         // TODO: ふれあい
                     },
-                    Route::Food => {
-                        // 食事の量を決定して食べる
-                        Character::eat(&mut character, &mut food);
+                    Route::Meal => {
+                        if meal.amount > 0 {
+                            // 食事の量を決定して食べる
+                            Character::eat(&mut character, &mut meal, &mut rice_ball);
+                            // 3秒間食事の様子を描画する
+                            Screen::draw_eat_page(&screen, &mut display).unwrap();
+                            delay.delay_ms(3000u16);
+                            // Homeに遷移する
+                            Navigation::update(&mut navigation, Direction::Left);
+                            Router::update(&mut router, Route::Home);
+                            // 画面を更新する
+                            Screen::draw_navigation(&screen, &mut display, Route::Home).unwrap();
+                            Screen::draw_home_page(&screen, &mut display).unwrap();
+                        }
                     },
                     Route::Play => {
                         // TODO: 遊ぶ
@@ -225,6 +243,7 @@ fn main() -> ! {
         }
 
         pedometer.update(accel.accel_norm().unwrap());
+        Character::find_rice_ball(&pedometer, &mut rice_ball);
         Screen::draw_pedometer(&screen, &mut display, &mut pedometer.step_count).unwrap();
 
         delay.delay_ms(100u16);

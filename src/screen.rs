@@ -1,5 +1,6 @@
-use crate::character::Character;
-use crate::food::Food;
+use crate::character_image::{CharacterImage, CharacterState};
+use crate::meal::Meal;
+use crate::rice_ball::RiceBall;
 use crate::router::Route;
 
 use core::{convert::TryInto, fmt::Write};
@@ -58,7 +59,7 @@ impl Screen {
 
         let data = match focus {
             Route::Home => include_bytes!("./assets/navigation/home.raw"),
-            Route::Food => include_bytes!("./assets/navigation/food.raw"),
+            Route::Meal => include_bytes!("./assets/navigation/meal.raw"),
             Route::Play => include_bytes!("./assets/navigation/play.raw"),
         };
 
@@ -70,7 +71,7 @@ impl Screen {
 
         let point = match focus {
             Route::Home => Point::new(0, 0),
-            Route::Food => Point::new(ICON_SIZE, 0),
+            Route::Meal => Point::new(ICON_SIZE, 0),
             Route::Play => Point::new(ICON_SIZE * 2, 0),
         };
 
@@ -126,23 +127,22 @@ impl Screen {
     pub fn draw_home_page<T>(
         &self,
         display: &mut T,
-        character: &mut Character
     ) -> Result<(), T::Error>
     where
         T: DrawTarget<Rgb565>,
     {
         self.clear_page(display)?;
 
-        let image_data = Character::get_image_data(&character);
-        let position = Character::get_point(&character);
+        let character_image = CharacterImage::new(CharacterState::Sleep);
 
-        Image::new(&image_data, position).draw(display)?;
+        Image::new(&character_image.data, character_image.point).draw(display)?;
         Ok(())
     }
-    pub fn draw_food_page<T>(
+    pub fn draw_meal_page<T>(
         &self,
         display: &mut T,
-        food: &Food
+        rice_ball: &RiceBall,
+        meal: &Meal,
     ) -> Result<(), T::Error>
     where
         T: DrawTarget<Rgb565>,
@@ -155,16 +155,43 @@ impl Screen {
             style = text_style!(font = Font24x32, text_color = FOREGROUND_COLOR)
         ).draw(display)?;
 
-        let mut textbuffer = String::<U256>::new();
-        write!(&mut textbuffer, "{:.2}", food.amount).unwrap();
 
         // 個数を描画する
+        let mut meal_amount_textbuffer = String::<U256>::new();
+        write!(&mut meal_amount_textbuffer, "{:.2}", meal.amount).unwrap();
+
         egtext!(
-            text = textbuffer.as_str(),
+            text = meal_amount_textbuffer.as_str(),
             top_left = (0, STATUS_BAR_HEIGHT + FONT_HEIGHT),
             style = text_style!(font = Font24x32, text_color = FOREGROUND_COLOR)
         )
         .draw(display)?;
+
+        // 持っているおにぎりの個数を描画する
+        let mut rice_ball_amount_textbuffer = String::<U256>::new();
+        write!(&mut rice_ball_amount_textbuffer, "MAX:{:.2}", rice_ball.amount).unwrap();
+
+        egtext!(
+            text = rice_ball_amount_textbuffer.as_str(),
+            top_left = (0, STATUS_BAR_HEIGHT + FONT_HEIGHT * 2),
+            style = text_style!(font = Font24x32, text_color = FOREGROUND_COLOR)
+        )
+        .draw(display)?;
+
+        Ok(())
+    }
+    pub fn draw_eat_page<T>(
+        &self,
+        display: &mut T
+    ) -> Result<(), T::Error>
+    where
+        T: DrawTarget<Rgb565>,
+    {
+        self.clear_page(display)?;
+
+        let character_image = CharacterImage::new(CharacterState::Eat);
+
+        Image::new(&character_image.data, character_image.point).draw(display)?;
 
         Ok(())
     }

@@ -1,59 +1,34 @@
-use crate::food::Food;
-
-use embedded_graphics::{image::ImageRawLE, pixelcolor::Rgb565, prelude::*};
-
-pub enum CharacterState {
-    Angry,
-    Away,
-    Food,
-    Happy,
-    Play,
-    Shy,
-    Sleep,
-}
+use crate::meal::Meal;
+use crate::pedometer::Pedometer;
+use crate::rice_ball::RiceBall;
 
 pub struct Character {
-    pub state: CharacterState,
     pub intimacy: i32,
 }
 
 impl Character {
-    pub fn new(state: CharacterState) -> Character {
+    pub fn new() -> Character {
         Character {
-            state,
             intimacy: 0,
         }
     }
-    pub fn eat(&mut self, food: &mut Food) {
-        // TODO: 一旦雑に食事量をそのまま親密度に足す
-        self.intimacy += food.amount;
-        food.amount = 0;
+    pub fn eat(&mut self, meal: &mut Meal, rice_ball: &mut RiceBall) {
+        // 食事量を親密度に足す
+        self.intimacy += meal.amount;
+        // 食べた分おにぎりの数を減らす
+        rice_ball.amount -= meal.amount;
+        // 食事量をリセット
+        meal.amount = 0;
     }
-    pub fn get_image_data(&self) -> ImageRawLE<'static, Rgb565> {
-        const WIDTH: u32 = 180;
-        const HEIGHT: u32 = 117;
+    pub fn find_rice_ball(pedometer: &Pedometer, rice_ball: &mut RiceBall) {
+        const FREQUENCY_OF_STEPS: i32 = 10;
 
-        let data = match self.state {
-            CharacterState::Angry => include_bytes!("./assets/character/angry/default.raw"),
-            CharacterState::Away => include_bytes!("./assets/character/away/default.raw"),
-            CharacterState::Food => include_bytes!("./assets/character/food/default.raw"),
-            CharacterState::Happy => include_bytes!("./assets/character/happy/default.raw"),
-            CharacterState::Play => include_bytes!("./assets/character/play/default.raw"),
-            CharacterState::Shy => include_bytes!("./assets/character/shy/default.raw"),
-            CharacterState::Sleep => include_bytes!("./assets/character/sleep/default.raw"),
-        };
-
-        ImageRawLE::new(data, WIDTH, HEIGHT)
-    }
-    pub fn get_point(&self) -> Point {
-        match self.state {
-            CharacterState::Angry => Point::new(60, 90),
-            CharacterState::Away => Point::new(60, 90),
-            CharacterState::Food => Point::new(0, 90),
-            CharacterState::Happy => Point::new(60, 90),
-            CharacterState::Play => Point::new(0, 90),
-            CharacterState::Shy => Point::new(60, 90),
-            CharacterState::Sleep => Point::new(60, 90),
+        // 歩数計が10歩カウントするごとにおにぎりを1個見つける
+        if pedometer.step_count - FREQUENCY_OF_STEPS >= rice_ball.last_step_count {
+            // 最後に見つけた歩数カウントを記録する
+            rice_ball.last_step_count = pedometer.step_count;
+            // おにぎりを1個追加する
+            rice_ball.amount += 1;
         }
     }
 }

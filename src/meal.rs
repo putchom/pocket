@@ -1,11 +1,11 @@
-pub struct Food {
+pub struct Meal {
     pub amount: i32,
 }
 
-impl Food {
-    pub fn new(amount: i32) -> Food {
-        Food {
-            amount
+impl Meal {
+    pub fn new() -> Meal {
+        Meal {
+            amount: 0
         }
     }
     pub fn increase(&mut self, max: i32) {

@@ -17,14 +17,14 @@ impl Navigation {
         match self.focus {
             Route::Home => match direction {
                 Direction::Left => {}
-                Direction::Right => self.focus = Route::Food,
+                Direction::Right => self.focus = Route::Meal,
             },
-            Route::Food => match direction {
+            Route::Meal => match direction {
                 Direction::Left => self.focus = Route::Home,
                 Direction::Right => self.focus = Route::Play
             },
             Route::Play => match direction {
-                Direction::Left => self.focus = Route::Food,
+                Direction::Left => self.focus = Route::Meal,
                 Direction::Right => {}
             },
         }

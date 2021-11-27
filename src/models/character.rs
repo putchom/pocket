@@ -1,6 +1,8 @@
-use crate::meal::Meal;
-use crate::pedometer::Pedometer;
-use crate::rice_ball::RiceBall;
+use crate::models::{
+    meal::Meal,
+    pedometer::Pedometer,
+    rice_ball::RiceBall
+};
 
 pub struct Character {
     pub intimacy: i32,

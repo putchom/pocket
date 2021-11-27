@@ -1,6 +1,5 @@
+use crate::models::{meal::Meal, rice_ball::RiceBall};
 use crate::character_image::{CharacterImage, CharacterState};
-use crate::meal::Meal;
-use crate::rice_ball::RiceBall;
 use crate::router::Route;
 
 use core::{convert::TryInto, fmt::Write};

@@ -1,23 +1,28 @@
 #![no_std]
 #![no_main]
 
-mod character;
+mod models {
+    pub mod character;
+    pub mod meal;
+    pub mod pedometer;
+    pub mod rice_ball;
+}
+
 mod character_image;
-mod meal;
 mod helper;
 mod navigation;
-mod pedometer;
-mod rice_ball;
 mod router;
 mod screen;
 
-use crate::character::Character;
-use crate::meal::Meal;
+use crate::models::{
+    character::Character,
+    meal::Meal, pedometer::Pedometer,
+    rice_ball::RiceBall
+};
+
 use crate::helper::beep;
 use crate::navigation::{Direction, Navigation};
-use crate::pedometer::Pedometer;
 use crate::router::{Route, Router};
-use crate::rice_ball::RiceBall;
 use crate::screen::Screen;
 
 use accelerometer::Accelerometer;

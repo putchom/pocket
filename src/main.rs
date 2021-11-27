@@ -4,6 +4,7 @@
 mod helpers {
     pub mod buzzer;
     pub mod character_image;
+    pub mod screen;
 }
 
 mod models {
@@ -13,28 +14,64 @@ mod models {
     pub mod rice_ball;
 }
 
+mod views {
+    pub mod navigation_view;
+    pub mod pedometer_view;
+    pub mod pages {
+        pub mod eat_page;
+        pub mod home_page;
+        pub mod meal_page;
+        pub mod play_page;
+    }
+}
+
 mod navigation;
 mod router;
-mod screen;
+
+use crate::helpers::{
+    buzzer::beep,
+    screen
+};
 
 use crate::models::{
     character::Character,
-    meal::Meal, pedometer::Pedometer,
+    meal::Meal,
+    pedometer::Pedometer,
     rice_ball::RiceBall
 };
 
-use crate::helpers::buzzer::beep;
+use crate::views::{
+    navigation_view::NavigationView,
+    pedometer_view::PedometerView,
+    pages::{
+        eat_page::EatPage,
+        home_page::HomePage,
+        meal_page::MealPage,
+        play_page::PlayPage,
+    },
+};
 
-use crate::navigation::{Direction, Navigation};
-use crate::router::{Route, Router};
-use crate::screen::Screen;
+use crate::navigation::{
+    Direction,
+    Navigation
+};
+use crate::router::{
+    Route, Router
+};
 
 use accelerometer::Accelerometer;
 use panic_halt as _;
 use wio_terminal::{
     entry,
-    hal::{clock::GenericClockController, delay::Delay, pwm::Channel},
-    pac::{CorePeripherals, Peripherals},
+    hal::{
+        clock::GenericClockController,
+        delay::Delay,
+        pwm::Channel
+    },
+    pac::{
+        CorePeripherals,
+        Peripherals
+    },
     prelude::*,
     Pins,
 };
@@ -104,20 +141,16 @@ fn main() -> ! {
         &mut sets.port,
     );
 
-    // Screenの初期化
-    let screen = Screen::new(320, 240);
-    Screen::draw_background(&screen, &mut display).unwrap();
-
     // Routerの初期化
     let mut router = Router::new(Route::Home);
 
     // ナビゲーションの初期化
     let mut navigation = Navigation::new(Route::Home);
-    Screen::draw_navigation(&screen, &mut display, navigation.focus).unwrap();
+    NavigationView::render(&mut display, navigation.focus).unwrap();
 
     // 歩数計の初期化
     let mut pedometer = Pedometer::new();
-    Screen::draw_pedometer(&screen, &mut display, &mut pedometer.step_count).unwrap();
+    PedometerView::render(&mut display, &mut pedometer.step_count).unwrap();
 
     // キャラクターの初期化
     let mut character = Character::new();
@@ -128,12 +161,11 @@ fn main() -> ! {
     // 食事の初期化
     let mut meal = Meal::new();
 
-    // ページの初期化
-    Screen::draw_home_page(
-        &screen,
-        &mut display,
-    )
-    .unwrap();
+    // 初期画面の描画(
+    screen::clear_screen(&mut display).unwrap();
+    NavigationView::render(&mut display, Route::Home).unwrap();
+    PedometerView::render(&mut display, &mut pedometer.step_count).unwrap();
+    HomePage::render(&mut display).unwrap();
 
     loop {
         // 下
@@ -144,13 +176,7 @@ fn main() -> ! {
                     beep(&mut buzzer, &mut delay, 800.hz(), 200u16);
                     // 食事の量を減らす
                     Meal::decrease(&mut meal);
-                    Screen::draw_meal_page(
-                        &screen,
-                        &mut display,
-                        &rice_ball,
-                        &meal,
-                    )
-                    .unwrap();
+                    MealPage::render(&mut display, &rice_ball, &meal).unwrap();
                 },
                 Route::Play => {},
             }
@@ -161,7 +187,7 @@ fn main() -> ! {
             // ナビゲーションを右に移動する
             beep(&mut buzzer, &mut delay, 800.hz(), 200u16);
             Navigation::update(&mut navigation, Direction::Right);
-            Screen::draw_navigation(&screen, &mut display, navigation.focus).unwrap();
+            NavigationView::render(&mut display, navigation.focus).unwrap();
         }
 
         // 上
@@ -172,13 +198,7 @@ fn main() -> ! {
                     beep(&mut buzzer, &mut delay, 800.hz(), 200u16);
                     // 食事の量を増やす
                     Meal::increase(&mut meal, rice_ball.amount);
-                    Screen::draw_meal_page(
-                        &screen,
-                        &mut display,
-                        &rice_ball,
-                        &meal,
-                    )
-                    .unwrap();
+                    MealPage::render(&mut display, &rice_ball, &meal).unwrap();
                 },
                 Route::Play => {},
             }
@@ -189,7 +209,7 @@ fn main() -> ! {
             // ナビゲーションを左に移動する
             beep(&mut buzzer, &mut delay, 800.hz(), 200u16);
             Navigation::update(&mut navigation, Direction::Left);
-            Screen::draw_navigation(&screen, &mut display, navigation.focus).unwrap();
+            NavigationView::render(&mut display, navigation.focus).unwrap();
         }
 
         // 押し込み
@@ -200,27 +220,13 @@ fn main() -> ! {
                 Router::update(&mut router, navigation.focus);
                 match router.route {
                     Route::Home => {
-                        Screen::draw_home_page(
-                            &screen,
-                            &mut display,
-                        )
-                        .unwrap();
+                        HomePage::render(&mut display).unwrap();
                     },
                     Route::Meal => {
-                        Screen::draw_meal_page(
-                            &screen,
-                            &mut display,
-                            &rice_ball,
-                            &meal,
-                        )
-                        .unwrap();
+                        MealPage::render(&mut display, &rice_ball, &meal).unwrap();
                     },
                     Route::Play => {
-                        Screen::draw_play_page(
-                            &screen,
-                            &mut display,
-                        )
-                        .unwrap();
+                        PlayPage::render(&mut display).unwrap();
                     },
                 }
             // 同一のページを選択した状態で押し込んだとき
@@ -234,14 +240,14 @@ fn main() -> ! {
                             // 食事の量を決定して食べる
                             Character::eat(&mut character, &mut meal, &mut rice_ball);
                             // 3秒間食事の様子を描画する
-                            Screen::draw_eat_page(&screen, &mut display).unwrap();
+                            EatPage::render(&mut display).unwrap();
                             delay.delay_ms(3000u16);
                             // Homeに遷移する
                             Navigation::update(&mut navigation, Direction::Left);
                             Router::update(&mut router, Route::Home);
                             // 画面を更新する
-                            Screen::draw_navigation(&screen, &mut display, Route::Home).unwrap();
-                            Screen::draw_home_page(&screen, &mut display).unwrap();
+                            NavigationView::render(&mut display, Route::Home).unwrap();
+                            HomePage::render(&mut display).unwrap();
                         }
                     },
                     Route::Play => {
@@ -253,7 +259,7 @@ fn main() -> ! {
 
         pedometer.update(accel.accel_norm().unwrap());
         Character::find_rice_ball(&pedometer, &mut rice_ball);
-        Screen::draw_pedometer(&screen, &mut display, &mut pedometer.step_count).unwrap();
+        PedometerView::render(&mut display, &mut pedometer.step_count).unwrap();
 
         delay.delay_ms(100u16);
     }

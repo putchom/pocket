@@ -1,5 +1,5 @@
+use crate::helpers::character_image;
 use crate::models::{meal::Meal, rice_ball::RiceBall};
-use crate::character_image::{CharacterImage, CharacterState};
 use crate::router::Route;
 
 use core::{convert::TryInto, fmt::Write};
@@ -132,9 +132,11 @@ impl Screen {
     {
         self.clear_page(display)?;
 
-        let character_image = CharacterImage::new(CharacterState::Sleep);
+        let state = character_image::State::Sleep;
+        let data = character_image::get_data(&state);
+        let point = character_image::get_point(&state);
 
-        Image::new(&character_image.data, character_image.point).draw(display)?;
+        Image::new(&data, point).draw(display)?;
         Ok(())
     }
     pub fn draw_meal_page<T>(
@@ -188,9 +190,11 @@ impl Screen {
     {
         self.clear_page(display)?;
 
-        let character_image = CharacterImage::new(CharacterState::Eat);
+        let state = character_image::State::Eat;
+        let data = character_image::get_data(&state);
+        let point = character_image::get_point(&state);
 
-        Image::new(&character_image.data, character_image.point).draw(display)?;
+        Image::new(&data, point).draw(display)?;
 
         Ok(())
     }

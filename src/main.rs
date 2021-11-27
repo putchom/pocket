@@ -1,6 +1,11 @@
 #![no_std]
 #![no_main]
 
+mod helpers {
+    pub mod buzzer;
+    pub mod character_image;
+}
+
 mod models {
     pub mod character;
     pub mod meal;
@@ -8,8 +13,6 @@ mod models {
     pub mod rice_ball;
 }
 
-mod character_image;
-mod helper;
 mod navigation;
 mod router;
 mod screen;
@@ -20,7 +23,8 @@ use crate::models::{
     rice_ball::RiceBall
 };
 
-use crate::helper::beep;
+use crate::helpers::buzzer::beep;
+
 use crate::navigation::{Direction, Navigation};
 use crate::router::{Route, Router};
 use crate::screen::Screen;

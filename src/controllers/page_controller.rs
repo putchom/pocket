@@ -1,15 +1,18 @@
 use crate::models::{
     character::Character,
     meal::Meal,
+    navigation::Navigation,
     rice_ball::RiceBall,
+    router::{
+        Route,
+        Router,
+    }
 };
 use crate::controllers::pages::{
     home_page_controller::HomePageController,
     meal_page_controller::MealPageController,
     play_page_controller::PlayPageController,
 };
-use crate::navigation::Navigation;
-use crate::router::{Router, Route};
 
 use embedded_graphics::{
     pixelcolor::Rgb565,

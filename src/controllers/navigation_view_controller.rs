@@ -1,7 +1,15 @@
 use crate::helpers::buzzer::beep;
 use crate::models::{
     meal::Meal,
+    navigation::{
+        Direction,
+        Navigation,
+    },
     rice_ball::RiceBall,
+    router::{
+        Route,
+        Router,
+    }
 };
 use crate::views::{
     navigation_view::NavigationView,
@@ -11,8 +19,6 @@ use crate::views::{
         play_page::PlayPage,
     },
 };
-use crate::navigation::{Navigation, Direction};
-use crate::router::{Router, Route};
 
 use embedded_graphics::{
     pixelcolor::Rgb565,

@@ -1,6 +1,8 @@
 use crate::helpers::buzzer::beep;
-use crate::navigation::Navigation;
-use crate::router::Route;
+use crate::models::{
+    navigation::Navigation,
+    router::Route,
+};
 
 use wio_terminal::{
     prelude::*,

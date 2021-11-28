@@ -1,4 +1,4 @@
-use crate::router::Route;
+use crate::models::router::Route;
 
 pub enum Direction {
     Left,

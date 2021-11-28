@@ -1,5 +1,5 @@
 use crate::helpers::screen;
-use crate::router::Route;
+use crate::models::router::Route;
 
 use core::convert::TryInto;
 use embedded_graphics::{

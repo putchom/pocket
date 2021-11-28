@@ -9,8 +9,10 @@ mod helpers {
 mod models {
     pub mod character;
     pub mod meal;
+    pub mod navigation;
     pub mod pedometer;
     pub mod rice_ball;
+    pub mod router;
 }
 mod views {
     pub mod navigation_view;
@@ -32,15 +34,18 @@ mod controllers {
         pub mod play_page_controller;
     }
 }
-mod navigation;
-mod router;
 
 use crate::helpers::screen;
 use crate::models::{
     character::Character,
     meal::Meal,
+    navigation::Navigation,
     pedometer::Pedometer,
-    rice_ball::RiceBall
+    rice_ball::RiceBall,
+    router::{
+        Route,
+        Router,
+    }
 };
 use crate::views::{
     navigation_view::NavigationView,
@@ -51,11 +56,6 @@ use crate::controllers::{
     navigation_view_controller::NavigationViewController,
     pedometer_view_controller::PedometerViewController,
     page_controller::PageController,
-};
-use crate::navigation::Navigation;
-use crate::router::{
-    Route,
-    Router
 };
 
 use accelerometer::Accelerometer;

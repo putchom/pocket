@@ -10,6 +10,8 @@ use embedded_graphics::{
     primitive_style,
 };
 
+const ICON_SIZE: i32 = 32;
+
 pub struct NavigationView;
 
 impl NavigationView {
@@ -36,14 +38,14 @@ impl NavigationView {
 
         let image_data = ImageRawLE::new(
             data,
-            screen::ICON_SIZE.try_into().unwrap(),
-            screen::ICON_SIZE.try_into().unwrap(),
+            ICON_SIZE.try_into().unwrap(),
+            ICON_SIZE.try_into().unwrap(),
         );
 
         let point = match focus {
             Route::Home => Point::new(0, 0),
-            Route::Meal => Point::new(screen::ICON_SIZE, 0),
-            Route::Play => Point::new(screen::ICON_SIZE * 2, 0),
+            Route::Meal => Point::new(ICON_SIZE, 0),
+            Route::Play => Point::new(ICON_SIZE * 2, 0),
         };
 
         Image::new(&image_data, point).draw(display)?;

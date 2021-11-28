@@ -7,7 +7,6 @@ use embedded_graphics::{
 
 pub const SCREEN_WIDTH: i32 = 320;
 pub const SCREEN_HEIGHT: i32 = 240;
-pub const ICON_SIZE: i32 = 32;
 pub const FONT_WIDTH: i32 = 24;
 pub const FONT_HEIGHT: i32 = 32;
 pub const STATUS_BAR_HEIGHT: i32 = 32;

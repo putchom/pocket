@@ -22,7 +22,7 @@ impl Character {
         // 食事量をリセット
         meal.amount = 0;
     }
-    pub fn find_rice_ball(pedometer: &Pedometer, rice_ball: &mut RiceBall) {
+    pub fn walk(pedometer: &Pedometer, rice_ball: &mut RiceBall) {
         const FREQUENCY_OF_STEPS: i32 = 10;
 
         // 歩数計が10歩カウントするごとにおにぎりを1個見つける

@@ -25,7 +25,7 @@ impl PedometerViewController {
         T: DrawTarget<Rgb565>,
     {
         Pedometer::update(pedometer, normalized_accel);
-        Character::find_rice_ball(pedometer, rice_ball);
+        Character::walk(pedometer, rice_ball);
         PedometerView::render(display, &mut pedometer.step_count);
     }
 }

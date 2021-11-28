@@ -25,6 +25,7 @@ mod views {
 mod controllers {
     pub mod navigation_view_controller;
     pub mod pedometer_view_controller;
+    pub mod page_controller;
     pub mod pages {
         pub mod home_page_controller;
         pub mod meal_page_controller;
@@ -49,11 +50,7 @@ use crate::views::{
 use crate::controllers::{
     navigation_view_controller::NavigationViewController,
     pedometer_view_controller::PedometerViewController,
-    pages::{
-        home_page_controller::HomePageController,
-        meal_page_controller::MealPageController,
-        play_page_controller::PlayPageController,
-    }
+    page_controller::PageController,
 };
 use crate::navigation::Navigation;
 use crate::router::{
@@ -188,39 +185,19 @@ fn main() -> ! {
             &mut rice_ball
         );
 
-        match router.route {
-            Route::Home => {
-                HomePageController::watch(
-                    &mut buzzer,
-                    &mut delay,
-                    &switch_z,
-                    &navigation
-                );
-            },
-            Route::Meal => {
-                MealPageController::watch(
-                    &mut display,
-                    &mut buzzer,
-                    &mut delay,
-                    &switch_x,
-                    &switch_u,
-                    &switch_z,
-                    &mut navigation,
-                    &mut router,
-                    &mut character,
-                    &mut meal,
-                    &mut rice_ball
-                );
-            },
-            Route::Play => {
-                PlayPageController::watch(
-                    &mut buzzer,
-                    &mut delay,
-                    &switch_z,
-                    &navigation
-                );
-            },
-        }
+        PageController::watch(
+            &mut display,
+            &mut buzzer,
+            &mut delay,
+            &switch_x,
+            &switch_u,
+            &switch_z,
+            &mut navigation,
+            &mut router,
+            &mut character,
+            &mut meal,
+            &mut rice_ball
+        );
 
         delay.delay_ms(100u16);
     }

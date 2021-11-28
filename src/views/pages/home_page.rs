@@ -1,5 +1,5 @@
 use crate::helpers::{
-    character_image,
+    image,
     screen,
 };
 use embedded_graphics::{
@@ -19,9 +19,9 @@ impl HomePage {
     {
         screen::clear_page(display)?;
 
-        let state = character_image::State::Sleep;
-        let data = character_image::get_data(&state);
-        let point = character_image::get_point(&state);
+        let state = image::CharacterState::Sleep;
+        let data = image::get_character_data(&state);
+        let point = image::get_character_point(&state);
 
         Image::new(&data, point).draw(display)?;
         Ok(())

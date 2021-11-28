@@ -3,7 +3,7 @@
 
 mod helpers {
     pub mod buzzer;
-    pub mod character_image;
+    pub mod image;
     pub mod screen;
 }
 mod models {

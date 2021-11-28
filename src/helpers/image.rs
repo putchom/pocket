@@ -1,8 +1,5 @@
 use embedded_graphics::{image::ImageRawLE, pixelcolor::Rgb565, prelude::*};
 
-pub const WIDTH: u32 = 180;
-pub const HEIGHT: u32 = 117;
-
 #[allow(dead_code)]
 pub enum CharacterState {
     Angry,
@@ -25,7 +22,7 @@ pub fn get_character_data(state: &CharacterState) -> ImageRawLE<'static, Rgb565>
         CharacterState::Sleep => include_bytes!("../assets/character/sleep/default.raw"),
     };
 
-    ImageRawLE::new(data, WIDTH, HEIGHT)
+    ImageRawLE::new(data, 180, 117)
 }
 
 pub fn get_character_point(state: &CharacterState) -> Point {

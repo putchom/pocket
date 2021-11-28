@@ -47,6 +47,7 @@ impl NavigationView {
         };
 
         Image::new(&image_data, point).draw(display)?;
+
         Ok(())
     }
 }

@@ -43,6 +43,7 @@ impl PedometerView {
             style = text_style!(font = Font24x32, text_color = screen::FOREGROUND_COLOR)
         )
         .draw(display)?;
+
         Ok(())
     }
 }

@@ -6,14 +6,12 @@ mod helpers {
     pub mod character_image;
     pub mod screen;
 }
-
 mod models {
     pub mod character;
     pub mod meal;
     pub mod pedometer;
     pub mod rice_ball;
 }
-
 mod views {
     pub mod navigation_view;
     pub mod pedometer_view;
@@ -24,39 +22,43 @@ mod views {
         pub mod play_page;
     }
 }
-
+mod controllers {
+    pub mod navigation_view_controller;
+    pub mod pedometer_view_controller;
+    pub mod pages {
+        pub mod home_page_controller;
+        pub mod meal_page_controller;
+        pub mod play_page_controller;
+    }
+}
 mod navigation;
 mod router;
 
-use crate::helpers::{
-    buzzer::beep,
-    screen
-};
-
+use crate::helpers::screen;
 use crate::models::{
     character::Character,
     meal::Meal,
     pedometer::Pedometer,
     rice_ball::RiceBall
 };
-
 use crate::views::{
     navigation_view::NavigationView,
     pedometer_view::PedometerView,
+    pages::home_page::HomePage,
+};
+use crate::controllers::{
+    navigation_view_controller::NavigationViewController,
+    pedometer_view_controller::PedometerViewController,
     pages::{
-        eat_page::EatPage,
-        home_page::HomePage,
-        meal_page::MealPage,
-        play_page::PlayPage,
-    },
+        home_page_controller::HomePageController,
+        meal_page_controller::MealPageController,
+        play_page_controller::PlayPageController,
+    }
 };
-
-use crate::navigation::{
-    Direction,
-    Navigation
-};
+use crate::navigation::Navigation;
 use crate::router::{
-    Route, Router
+    Route,
+    Router
 };
 
 use accelerometer::Accelerometer;
@@ -146,11 +148,9 @@ fn main() -> ! {
 
     // ナビゲーションの初期化
     let mut navigation = Navigation::new(Route::Home);
-    NavigationView::render(&mut display, navigation.focus).unwrap();
 
     // 歩数計の初期化
     let mut pedometer = Pedometer::new();
-    PedometerView::render(&mut display, &mut pedometer.step_count).unwrap();
 
     // キャラクターの初期化
     let mut character = Character::new();
@@ -161,105 +161,66 @@ fn main() -> ! {
     // 食事の初期化
     let mut meal = Meal::new();
 
-    // 初期画面の描画(
+    // 初期画面の描画
     screen::clear_screen(&mut display).unwrap();
-    NavigationView::render(&mut display, Route::Home).unwrap();
+    NavigationView::render(&mut display, navigation.focus).unwrap();
     PedometerView::render(&mut display, &mut pedometer.step_count).unwrap();
     HomePage::render(&mut display).unwrap();
 
     loop {
-        // 下
-        if switch_x.is_low().unwrap() {
-            match router.route {
-                Route::Home => {},
-                Route::Meal => {
-                    beep(&mut buzzer, &mut delay, 800.hz(), 200u16);
-                    // 食事の量を減らす
-                    Meal::decrease(&mut meal);
-                    MealPage::render(&mut display, &rice_ball, &meal).unwrap();
-                },
-                Route::Play => {},
-            }
-        }
+        NavigationViewController::watch(
+            &mut display,
+            &mut buzzer,
+            &mut delay,
+            &switch_y,
+            &switch_b,
+            &switch_z,
+            &mut navigation,
+            &mut router,
+            &meal,
+            &rice_ball
+        );
 
-        // 右
-        if switch_y.is_low().unwrap() {
-            // ナビゲーションを右に移動する
-            beep(&mut buzzer, &mut delay, 800.hz(), 200u16);
-            Navigation::update(&mut navigation, Direction::Right);
-            NavigationView::render(&mut display, navigation.focus).unwrap();
-        }
+        PedometerViewController::watch(
+            &mut display,
+            accel.accel_norm().unwrap(),
+            &mut pedometer,
+            &mut rice_ball
+        );
 
-        // 上
-        if switch_u.is_low().unwrap() {
-            match router.route {
-                Route::Home => {},
-                Route::Meal => {
-                    beep(&mut buzzer, &mut delay, 800.hz(), 200u16);
-                    // 食事の量を増やす
-                    Meal::increase(&mut meal, rice_ball.amount);
-                    MealPage::render(&mut display, &rice_ball, &meal).unwrap();
-                },
-                Route::Play => {},
-            }
+        match router.route {
+            Route::Home => {
+                HomePageController::watch(
+                    &mut buzzer,
+                    &mut delay,
+                    &switch_z,
+                    &navigation
+                );
+            },
+            Route::Meal => {
+                MealPageController::watch(
+                    &mut display,
+                    &mut buzzer,
+                    &mut delay,
+                    &switch_x,
+                    &switch_u,
+                    &switch_z,
+                    &mut navigation,
+                    &mut router,
+                    &mut character,
+                    &mut meal,
+                    &mut rice_ball
+                );
+            },
+            Route::Play => {
+                PlayPageController::watch(
+                    &mut buzzer,
+                    &mut delay,
+                    &switch_z,
+                    &navigation
+                );
+            },
         }
-
-        // 左
-        if switch_b.is_low().unwrap() {
-            // ナビゲーションを左に移動する
-            beep(&mut buzzer, &mut delay, 800.hz(), 200u16);
-            Navigation::update(&mut navigation, Direction::Left);
-            NavigationView::render(&mut display, navigation.focus).unwrap();
-        }
-
-        // 押し込み
-        if switch_z.is_low().unwrap() {
-            beep(&mut buzzer, &mut delay, 800.hz(), 200u16);
-            // 違うページを選択した状態で押し込んだとき
-            if router.route != navigation.focus {
-                Router::update(&mut router, navigation.focus);
-                match router.route {
-                    Route::Home => {
-                        HomePage::render(&mut display).unwrap();
-                    },
-                    Route::Meal => {
-                        MealPage::render(&mut display, &rice_ball, &meal).unwrap();
-                    },
-                    Route::Play => {
-                        PlayPage::render(&mut display).unwrap();
-                    },
-                }
-            // 同一のページを選択した状態で押し込んだとき
-            } else {
-                match router.route {
-                    Route::Home => {
-                        // TODO: ふれあい
-                    },
-                    Route::Meal => {
-                        if meal.amount > 0 {
-                            // 食事の量を決定して食べる
-                            Character::eat(&mut character, &mut meal, &mut rice_ball);
-                            // 3秒間食事の様子を描画する
-                            EatPage::render(&mut display).unwrap();
-                            delay.delay_ms(3000u16);
-                            // Homeに遷移する
-                            Navigation::update(&mut navigation, Direction::Left);
-                            Router::update(&mut router, Route::Home);
-                            // 画面を更新する
-                            NavigationView::render(&mut display, Route::Home).unwrap();
-                            HomePage::render(&mut display).unwrap();
-                        }
-                    },
-                    Route::Play => {
-                        // TODO: 遊ぶ
-                    },
-                }
-            }
-        }
-
-        pedometer.update(accel.accel_norm().unwrap());
-        Character::find_rice_ball(&pedometer, &mut rice_ball);
-        PedometerView::render(&mut display, &mut pedometer.step_count).unwrap();
 
         delay.delay_ms(100u16);
     }

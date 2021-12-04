@@ -1,16 +1,4 @@
 use crate::helpers::buzzer::beep;
-use crate::models::{
-    meal::Meal,
-    navigation::{
-        Direction,
-        Navigation,
-    },
-    rice_ball::RiceBall,
-    router::{
-        Route,
-        Router,
-    }
-};
 use crate::views::{
     navigation_view::NavigationView,
     pages::{
@@ -23,6 +11,20 @@ use crate::views::{
 use embedded_graphics::{
     pixelcolor::Rgb565,
     prelude::*,
+};
+use models::{
+    bet::Bet,
+    meal::Meal,
+    navigation::{
+        Direction,
+        Navigation,
+    },
+    rice_ball::RiceBall,
+    router::{
+        Route,
+        Router,
+    },
+    shuriken::Shuriken,
 };
 use wio_terminal::{
     prelude::*,
@@ -54,8 +56,10 @@ impl NavigationViewController {
         switch_z: &Pin<PD10, Input<Floating>>,
         navigation: &mut Navigation,
         router: &mut Router,
+        bet: &Bet,
         meal: &Meal,
         rice_ball: &RiceBall,
+        shuriken: &Shuriken,
     )
     where
         T: DrawTarget<Rgb565>,
@@ -86,7 +90,7 @@ impl NavigationViewController {
                     MealPage::render(display, &rice_ball, &meal);
                 },
                 Route::Play => {
-                    PlayPage::render(display);
+                    PlayPage::render(display, &bet, &shuriken);
                 },
             }
         }

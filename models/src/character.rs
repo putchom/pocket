@@ -1,7 +1,9 @@
 use crate::{
+    bet::Bet,
     meal::Meal,
     pedometer::Pedometer,
-    rice_ball::RiceBall
+    rice_ball::RiceBall,
+    shuriken::Shuriken
 };
 
 pub struct Character {
@@ -20,7 +22,11 @@ impl Character {
             intimacy: 0,
         }
     }
-    pub fn eat(&mut self, meal: &mut Meal, rice_ball: &mut RiceBall) {
+    pub fn eat(
+        &mut self,
+        meal: &mut Meal,
+        rice_ball: &mut RiceBall
+    ) {
         // 食事量を親密度に足す
         self.intimacy += meal.amount;
         // 食べた分おにぎりの数を減らす
@@ -28,7 +34,28 @@ impl Character {
         // 食事量をリセット
         meal.amount = 0;
     }
-    pub fn walk(pedometer: &Pedometer, rice_ball: &mut RiceBall) {
+    pub fn play(
+        &mut self,
+        bet: &mut Bet,
+        shuriken: &mut Shuriken
+    ) {
+        // 賭けた分手裏剣の数を減らす
+        shuriken.amount -= bet.amount;
+        // BETをリセット
+        bet.amount = 0;
+    }
+    pub fn get_reward(
+        &mut self,
+        reward: i32
+    ) {
+        // 報酬を親密度に足す
+        self.intimacy += reward;
+    }
+    pub fn walk(
+        pedometer: &Pedometer,
+        rice_ball: &mut RiceBall,
+        shuriken: &mut Shuriken
+    ) {
         const FREQUENCY_OF_STEPS: i32 = 10;
 
         // 歩数計が10歩カウントするごとにおにぎりを1個見つける
@@ -37,6 +64,14 @@ impl Character {
             rice_ball.last_step_count = pedometer.step_count;
             // おにぎりを1個追加する
             rice_ball.amount += 1;
+        }
+
+        // 歩数計が10歩カウントするごとに手裏剣を1個見つける
+        if pedometer.step_count - FREQUENCY_OF_STEPS >= shuriken.last_step_count {
+            // 最後に見つけた歩数カウントを記録する
+            shuriken.last_step_count = pedometer.step_count;
+            // 手裏剣を1個追加する
+            shuriken.amount += 1;
         }
     }
 }
@@ -62,6 +97,16 @@ mod tests {
     }
 
     #[test]
+    fn test_play() {
+        // TODO: test
+    }
+
+    #[test]
+    fn test_get_reward() {
+        // TODO: test
+    }
+
+    #[test]
     fn test_walk() {
         let mut pedometer = Pedometer {
             sample_count: 0,
@@ -76,15 +121,19 @@ mod tests {
             amount: 0,
             last_step_count: 0
         };
+        let mut shuriken = Shuriken {
+            amount: 0,
+            last_step_count: 0
+        };
 
-        Character::walk(&pedometer, &mut rice_ball);
+        Character::walk(&pedometer, &mut rice_ball, &mut shuriken);
 
         assert_eq!(rice_ball.amount, 0);
         assert_eq!(rice_ball.last_step_count, 0);
 
         pedometer.step_count = 10;
 
-        Character::walk(&pedometer, &mut rice_ball);
+        Character::walk(&pedometer, &mut rice_ball, &mut shuriken);
 
         assert_eq!(rice_ball.amount, 1);
         assert_eq!(rice_ball.last_step_count, 10);

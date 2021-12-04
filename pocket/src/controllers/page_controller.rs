@@ -1,4 +1,5 @@
 use crate::models::{
+    bet::Bet,
     character::Character,
     meal::Meal,
     navigation::Navigation,
@@ -6,7 +7,8 @@ use crate::models::{
     router::{
         Route,
         Router,
-    }
+    },
+    shuriken::Shuriken,
 };
 use crate::controllers::pages::{
     home_page_controller::HomePageController,
@@ -45,8 +47,10 @@ impl PageController {
         navigation: &mut Navigation,
         router: &mut Router,
         character: &mut Character,
+        bet: &mut Bet,
         meal: &mut Meal,
         rice_ball: &mut RiceBall,
+        shuriken: &mut Shuriken,
     )
     where
         T: DrawTarget<Rgb565>,
@@ -77,10 +81,17 @@ impl PageController {
             },
             Route::Play => {
                 PlayPageController::watch(
+                    display,
                     buzzer,
                     delay,
+                    switch_x,
+                    switch_u,
                     switch_z,
-                    navigation
+                    navigation,
+                    router,
+                    character,
+                    bet,
+                    shuriken
                 );
             },
         }

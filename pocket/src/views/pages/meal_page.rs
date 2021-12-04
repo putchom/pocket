@@ -43,7 +43,7 @@ impl MealPage {
 
         // 持っているおにぎりの個数を描画する
         let mut rice_ball_amount_textbuffer = String::<U256>::new();
-        write!(&mut rice_ball_amount_textbuffer, "MAX:{:.2}", rice_ball.amount).unwrap();
+        write!(&mut rice_ball_amount_textbuffer, "Rice ball:{:.2}", rice_ball.amount).unwrap();
 
         egtext!(
             text = rice_ball_amount_textbuffer.as_str(),

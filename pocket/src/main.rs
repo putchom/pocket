@@ -16,6 +16,7 @@ mod views {
         pub mod home_page;
         pub mod meal_page;
         pub mod play_page;
+        pub mod throw_page;
     }
 }
 mod controllers {
@@ -43,6 +44,7 @@ use crate::controllers::{
 
 use accelerometer::Accelerometer;
 use models::{
+    bet::Bet,
     character::Character,
     meal::Meal,
     navigation::Navigation,
@@ -51,7 +53,8 @@ use models::{
     router::{
         Route,
         Router,
-    }
+    },
+    shuriken::Shuriken,
 };
 use panic_halt as _;
 use wio_terminal::{
@@ -152,6 +155,12 @@ fn main() -> ! {
     // 食事の初期化
     let mut meal = Meal::new();
 
+    // BETの初期化
+    let mut bet = Bet::new();
+
+    // 手裏剣の初期化
+    let mut shuriken = Shuriken::new();
+
     // 初期画面の描画
     screen::clear_screen(&mut display).unwrap();
     NavigationView::render(&mut display, navigation.focus).unwrap();
@@ -168,15 +177,18 @@ fn main() -> ! {
             &switch_z,
             &mut navigation,
             &mut router,
+            &bet,
             &meal,
-            &rice_ball
+            &rice_ball,
+            &shuriken,
         );
 
         PedometerViewController::watch(
             &mut display,
             accel.accel_norm().unwrap(),
             &mut pedometer,
-            &mut rice_ball
+            &mut rice_ball,
+            &mut shuriken,
         );
 
         PageController::watch(
@@ -189,8 +201,10 @@ fn main() -> ! {
             &mut navigation,
             &mut router,
             &mut character,
+            &mut bet,
             &mut meal,
-            &mut rice_ball
+            &mut rice_ball,
+            &mut shuriken,
         );
 
         delay.delay_ms(100u16);

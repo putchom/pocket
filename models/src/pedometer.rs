@@ -1,3 +1,4 @@
+#![allow(unused_imports)]
 use accelerometer::vector::F32x3;
 use micromath::F32Ext;
 
@@ -9,6 +10,12 @@ pub struct Pedometer {
     pub step_count: i32,
     pub state: bool,
     pub last_state: bool,
+}
+
+impl Default for Pedometer {
+    fn default() -> Self {
+        Pedometer::new()
+    }
 }
 
 impl Pedometer {

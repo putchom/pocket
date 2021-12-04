@@ -3,6 +3,12 @@ pub struct RiceBall {
     pub last_step_count: i32,
 }
 
+impl Default for RiceBall {
+    fn default() -> Self {
+        RiceBall::new()
+    }
+}
+
 impl RiceBall {
     pub fn new() -> RiceBall {
         RiceBall {

@@ -8,6 +8,12 @@ pub struct Character {
     pub intimacy: i32,
 }
 
+impl Default for Character {
+    fn default() -> Self {
+        Character::new()
+    }
+}
+
 impl Character {
     pub fn new() -> Character {
         Character {

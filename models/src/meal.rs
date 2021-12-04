@@ -25,3 +25,46 @@ impl Meal {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_can_increase() {
+        let mut meal = Meal { amount: 0 };
+        let rice_ball_max_amount = 10;
+
+        Meal::increase(&mut meal, rice_ball_max_amount);
+
+        assert_eq!(meal.amount, 1);
+    }
+
+    #[test]
+    fn test_can_not_increase() {
+        let mut meal = Meal { amount: 0 };
+        let rice_ball_max_amount = 0;
+
+        Meal::increase(&mut meal, rice_ball_max_amount);
+
+        assert_eq!(meal.amount, 0);
+    }
+
+    #[test]
+    fn test_can_decrease() {
+        let mut meal = Meal { amount: 1 };
+        
+        Meal::decrease(&mut meal);
+
+        assert_eq!(meal.amount, 0);
+    }
+
+    #[test]
+    fn test_can_not_decrease() {
+        let mut meal = Meal { amount: 0 };
+
+        Meal::decrease(&mut meal);
+
+        assert_eq!(meal.amount, 0);
+    }
+}

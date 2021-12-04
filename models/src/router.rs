@@ -17,3 +17,17 @@ impl Router {
         self.route = route
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_update() {
+        let mut router = Router { route: Route::Home };
+
+        Router::update(&mut router, Route::Meal);
+
+        assert_eq!(router.route, Route::Meal);
+    }
+}

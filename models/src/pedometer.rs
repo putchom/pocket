@@ -76,3 +76,99 @@ impl Pedometer {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use accelerometer::vector::F32x3;
+
+    // TODO: 平方根のテストする方法探す
+    // #[test]
+    // fn test_get_composite_accel() {
+    //     let normalized_accel = F32x3::new(1.0, 1.0, 1.0);
+
+    //     let composite_accel = Pedometer::get_composite_accel(normalized_accel);
+
+    //     assert_eq!(composite_accel, 1.73205080756887729352);
+    // }
+
+    #[test]
+    fn test_set_threshold() {
+        // TODO: f32のasset_eq!やる方法探す
+
+        let mut pedometer = Pedometer::new();
+        let composite_accel = 2.0;
+
+        for count in 1..50 {
+            Pedometer::set_threshold(&mut pedometer, composite_accel);
+
+            if count == 50 {
+                // assert_eq!(pedometer.threshold, 2.0);
+                // assert_eq!(pedometer.hysteresis, 0.4);
+                // assert_eq!(pedometer.total_composite_accel, 0.0);
+                assert_eq!(pedometer.sample_count, 0);
+            } else {
+                // assert_eq!(pedometer.threshold, 1.5);
+                // assert_eq!(pedometer.hysteresis, 0.15);
+                // assert_eq!(pedometer.total_composite_accel, 2.0 * count as f32);
+                assert_eq!(pedometer.sample_count, count);
+            }
+        }
+    }
+
+    #[test]
+    fn test_set_state() {
+        let mut pedometer1 = Pedometer::new();
+        let large_composite_accel = 2.0;
+
+        Pedometer::set_state(&mut pedometer1, large_composite_accel);
+
+        assert_eq!(pedometer1.state, true);
+
+        let mut pedometer2 = Pedometer::new();
+        let small_composite_accel = 1.0;
+
+        Pedometer::set_state(&mut pedometer2, small_composite_accel);
+
+        assert_eq!(pedometer2.state, false);
+    }
+
+    #[test]
+    fn test_set_step_count() {
+        let mut pedometer1 = Pedometer::new();
+        pedometer1.last_state = false;
+        pedometer1.state = false;
+
+        Pedometer::set_step_count(&mut pedometer1);
+
+        assert_eq!(pedometer1.step_count, 0);
+        assert_eq!(pedometer1.last_state, false);
+
+        let mut pedometer2 = Pedometer::new();
+        pedometer2.last_state = false;
+        pedometer2.state = true;
+
+        Pedometer::set_step_count(&mut pedometer2);
+
+        assert_eq!(pedometer2.step_count, 1);
+        assert_eq!(pedometer2.last_state, true);
+
+        let mut pedometer3 = Pedometer::new();
+        pedometer3.last_state = true;
+        pedometer3.state = true;
+
+        Pedometer::set_step_count(&mut pedometer3);
+
+        assert_eq!(pedometer3.step_count, 0);
+        assert_eq!(pedometer3.last_state, true);
+
+        let mut pedometer4 = Pedometer::new();
+        pedometer4.last_state = true;
+        pedometer4.state = false;
+
+        Pedometer::set_step_count(&mut pedometer4);
+
+        assert_eq!(pedometer4.step_count, 0);
+        assert_eq!(pedometer4.last_state, false);
+    }
+}

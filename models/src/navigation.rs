@@ -30,3 +30,62 @@ impl Navigation {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_update_home_to_left() {
+        let mut navigation = Navigation { focus: Route::Home };
+
+        Navigation::update(&mut navigation, Direction::Left);
+
+        assert_eq!(navigation.focus, Route::Home);
+    }
+
+    #[test]
+    fn test_update_home_to_right() {
+        let mut navigation = Navigation { focus: Route::Home };
+
+        Navigation::update(&mut navigation, Direction::Right);
+
+        assert_eq!(navigation.focus, Route::Meal);
+    }
+
+    #[test]
+    fn test_update_meal_to_left() {
+        let mut navigation = Navigation { focus: Route::Meal };
+
+        Navigation::update(&mut navigation, Direction::Left);
+
+        assert_eq!(navigation.focus, Route::Home);
+    }
+
+    #[test]
+    fn test_update_meal_to_right() {
+        let mut navigation = Navigation { focus: Route::Meal };
+
+        Navigation::update(&mut navigation, Direction::Right);
+
+        assert_eq!(navigation.focus, Route::Play);
+    }
+
+    #[test]
+    fn test_update_play_to_left() {
+        let mut navigation = Navigation { focus: Route::Play };
+
+        Navigation::update(&mut navigation, Direction::Left);
+
+        assert_eq!(navigation.focus, Route::Meal);
+    }
+
+    #[test]
+    fn test_update_play_to_right() {
+        let mut navigation = Navigation { focus: Route::Play };
+
+        Navigation::update(&mut navigation, Direction::Right);
+
+        assert_eq!(navigation.focus, Route::Play);
+    }
+}

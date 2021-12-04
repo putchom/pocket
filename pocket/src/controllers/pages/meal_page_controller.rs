@@ -76,7 +76,9 @@ impl MealPageController {
         }
         if switch_z.is_low().unwrap() && navigation.focus == Route::Meal && meal.amount > 0 {
             beep(buzzer, delay, 800.hz(), 200u16);
-            // 食事の量を決定して食べる
+            // 食事量の分だけ親密度UP
+            Character::intimate(character, meal.amount);
+            // 食べる
             Character::eat(character, meal, rice_ball);
             // 3秒間食事の様子を描画する
             EatPage::render(display);

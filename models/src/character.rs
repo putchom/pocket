@@ -27,8 +27,6 @@ impl Character {
         meal: &mut Meal,
         rice_ball: &mut RiceBall
     ) {
-        // 食事量を親密度に足す
-        self.intimacy += meal.amount;
         // 食べた分おにぎりの数を減らす
         rice_ball.amount -= meal.amount;
         // 食事量をリセット
@@ -44,12 +42,12 @@ impl Character {
         // BETをリセット
         bet.amount = 0;
     }
-    pub fn get_reward(
+    pub fn intimate(
         &mut self,
-        reward: i32
+        amount: i32
     ) {
-        // 報酬を親密度に足す
-        self.intimacy += reward;
+        // 親密度を足す
+        self.intimacy += amount;
     }
     pub fn walk(
         pedometer: &Pedometer,
@@ -112,8 +110,13 @@ mod tests {
     }
 
     #[test]
-    fn test_get_reward() {
-        // TODO: test
+    fn test_intimate() {
+        let mut character = Character { intimacy: 0 };
+        let intimacy_amount = 1;
+
+        Character::intimate(&mut character, intimacy_amount);
+
+        assert_eq!(character.intimacy, 1);
     }
 
     #[test]

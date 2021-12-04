@@ -76,9 +76,10 @@ impl PlayPageController {
         }
         if switch_z.is_low().unwrap() && navigation.focus == Route::Play && bet.amount > 0 {
             beep(buzzer, delay, 800.hz(), 200u16);
-            // Betの量を決定して遊ぶ
+            // 遊ぶ
             Character::play(character, bet, shuriken);
-            Character::get_reward(character, 1);
+            // 親密度UP
+            Character::intimate(character, 1);
             // 手裏剣の投擲画面に遷移
             ThrowPage::render(display);
             delay.delay_ms(3000u16);

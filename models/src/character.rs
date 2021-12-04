@@ -98,7 +98,17 @@ mod tests {
 
     #[test]
     fn test_play() {
-        // TODO: test
+        let mut character = Character { intimacy: 0 };
+        let mut bet = Bet { amount: 1 };
+        let mut shuriken = Shuriken {
+            amount: 10,
+            last_step_count: 100
+        };
+
+        Character::play(&mut character, &mut bet, &mut shuriken);
+
+        assert_eq!(bet.amount, 0);
+        assert_eq!(shuriken.amount, 9);
     }
 
     #[test]

@@ -1,4 +1,4 @@
-use crate::models::{
+use crate::{
     meal::Meal,
     pedometer::Pedometer,
     rice_ball::RiceBall

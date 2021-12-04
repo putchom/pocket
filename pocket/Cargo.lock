@@ -315,14 +315,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "39617bc909d64b068dcffd0e3e31679195b5576d0c83fadc52690268cc2b2b55"
 
 [[package]]
-name = "models"
-version = "0.1.0"
-dependencies = [
- "accelerometer",
- "micromath 2.0.0",
-]
-
-[[package]]
 name = "nb"
 version = "0.1.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -396,7 +388,6 @@ dependencies = [
  "embedded-graphics",
  "heapless",
  "micromath 2.0.0",
- "models",
  "nb 0.1.3",
  "panic-halt",
  "wio_terminal",

@@ -1,18 +1,12 @@
 #![no_std]
 #![no_main]
 
+extern crate models;
+
 mod helpers {
     pub mod buzzer;
     pub mod image;
     pub mod screen;
-}
-mod models {
-    pub mod character;
-    pub mod meal;
-    pub mod navigation;
-    pub mod pedometer;
-    pub mod rice_ball;
-    pub mod router;
 }
 mod views {
     pub mod navigation_view;
@@ -36,17 +30,6 @@ mod controllers {
 }
 
 use crate::helpers::screen;
-use crate::models::{
-    character::Character,
-    meal::Meal,
-    navigation::Navigation,
-    pedometer::Pedometer,
-    rice_ball::RiceBall,
-    router::{
-        Route,
-        Router,
-    }
-};
 use crate::views::{
     navigation_view::NavigationView,
     pedometer_view::PedometerView,
@@ -59,6 +42,17 @@ use crate::controllers::{
 };
 
 use accelerometer::Accelerometer;
+use models::{
+    character::Character,
+    meal::Meal,
+    navigation::Navigation,
+    pedometer::Pedometer,
+    rice_ball::RiceBall,
+    router::{
+        Route,
+        Router,
+    }
+};
 use panic_halt as _;
 use wio_terminal::{
     entry,

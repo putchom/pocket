@@ -40,3 +40,53 @@ impl Character {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_eat() {
+        let mut character = Character { intimacy: 0 };
+        let mut meal = Meal { amount: 1 };
+        let mut rice_ball = RiceBall {
+            amount: 10,
+            last_step_count: 100
+        };
+
+        Character::eat(&mut character, &mut meal, &mut rice_ball);
+
+        assert_eq!(character.intimacy, 1);
+        assert_eq!(meal.amount, 0);
+        assert_eq!(rice_ball.amount, 9);
+    }
+
+    #[test]
+    fn test_walk() {
+        let mut pedometer = Pedometer {
+            sample_count: 0,
+            total_composite_accel: 0.0,
+            threshold: 1.5,
+            hysteresis: 0.15,
+            step_count: 0,
+            state: false,
+            last_state: false
+        };
+        let mut rice_ball = RiceBall {
+            amount: 0,
+            last_step_count: 0
+        };
+
+        Character::walk(&pedometer, &mut rice_ball);
+
+        assert_eq!(rice_ball.amount, 0);
+        assert_eq!(rice_ball.last_step_count, 0);
+
+        pedometer.step_count = 10;
+
+        Character::walk(&pedometer, &mut rice_ball);
+
+        assert_eq!(rice_ball.amount, 1);
+        assert_eq!(rice_ball.last_step_count, 10);
+    }
+}

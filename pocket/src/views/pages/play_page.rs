@@ -42,7 +42,7 @@ impl PlayPage {
 
         // 持っている手裏剣の個数を描画する
         let mut shuriken_amount_textbuffer = String::<U256>::new();
-        write!(&mut shuriken_amount_textbuffer, "Shuriken:{:.2}", shuriken.amount).unwrap();
+        write!(&mut shuriken_amount_textbuffer, "/{:.2}", shuriken.amount).unwrap();
 
         egtext!(
             text = shuriken_amount_textbuffer.as_str(),

@@ -54,13 +54,13 @@ impl PlayPageController {
     {
         if switch_x.is_low().unwrap() {
             beep(buzzer, delay, 800.hz(), 200u16);
-            // 食事の量を減らす
+            // 掛け金の量を減らす
             Bet::decrease(bet);
             PlayPage::render(display, &bet, &shuriken);
         }
         if switch_u.is_low().unwrap() {
             beep(buzzer, delay, 800.hz(), 200u16);
-            // 食事の量を増やす
+            // 掛け金の量を増やす
             Bet::increase(bet, shuriken.amount);
             PlayPage::render(display, &bet, &shuriken);
         }

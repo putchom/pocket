@@ -123,14 +123,14 @@ mod tests {
 
         Pedometer::set_state(&mut pedometer1, large_composite_accel);
 
-        assert_eq!(pedometer1.state, true);
+        assert!(pedometer1.state);
 
         let mut pedometer2 = Pedometer::new();
         let small_composite_accel = 1.0;
 
         Pedometer::set_state(&mut pedometer2, small_composite_accel);
 
-        assert_eq!(pedometer2.state, false);
+        assert!(!pedometer2.state);
     }
 
     #[test]
@@ -142,7 +142,7 @@ mod tests {
         Pedometer::set_step_count(&mut pedometer1);
 
         assert_eq!(pedometer1.step_count, 0);
-        assert_eq!(pedometer1.last_state, false);
+        assert!(!pedometer1.last_state);
 
         let mut pedometer2 = Pedometer::new();
         pedometer2.last_state = false;
@@ -151,7 +151,7 @@ mod tests {
         Pedometer::set_step_count(&mut pedometer2);
 
         assert_eq!(pedometer2.step_count, 1);
-        assert_eq!(pedometer2.last_state, true);
+        assert!(pedometer2.last_state);
 
         let mut pedometer3 = Pedometer::new();
         pedometer3.last_state = true;
@@ -160,7 +160,7 @@ mod tests {
         Pedometer::set_step_count(&mut pedometer3);
 
         assert_eq!(pedometer3.step_count, 0);
-        assert_eq!(pedometer3.last_state, true);
+        assert!(pedometer3.last_state);
 
         let mut pedometer4 = Pedometer::new();
         pedometer4.last_state = true;
@@ -169,6 +169,6 @@ mod tests {
         Pedometer::set_step_count(&mut pedometer4);
 
         assert_eq!(pedometer4.step_count, 0);
-        assert_eq!(pedometer4.last_state, false);
+        assert!(!pedometer4.last_state);
     }
 }

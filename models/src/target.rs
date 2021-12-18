@@ -1,3 +1,4 @@
+#[derive(Debug, Clone, Copy, PartialEq)]
 pub enum TargetPosition {
     Left,
     Center,
@@ -32,5 +33,27 @@ impl Target {
                 self.position = TargetPosition::Left
             }
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_update() {
+        let mut target = Target { position: TargetPosition::Left };
+
+        Target::update(&mut target);
+        
+        assert_eq!(target.position, TargetPosition::Center);
+
+        Target::update(&mut target);
+
+        assert_eq!(target.position, TargetPosition::Right);
+
+        Target::update(&mut target);
+
+        assert_eq!(target.position, TargetPosition::Left);
     }
 }

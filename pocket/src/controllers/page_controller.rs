@@ -9,6 +9,7 @@ use crate::models::{
         Router,
     },
     shuriken::Shuriken,
+    target::Target,
 };
 use crate::controllers::pages::{
     home_page_controller::HomePageController,
@@ -33,6 +34,8 @@ use wio_terminal::hal::{
     },
 };
 
+use super::pages::game_page_controller::GamePageController;
+
 pub struct PageController;
 
 impl PageController {
@@ -51,6 +54,7 @@ impl PageController {
         meal: &mut Meal,
         rice_ball: &mut RiceBall,
         shuriken: &mut Shuriken,
+        target: &mut Target,
     )
     where
         T: DrawTarget<Rgb565>,
@@ -89,11 +93,24 @@ impl PageController {
                     switch_z,
                     navigation,
                     router,
-                    character,
                     bet,
                     shuriken
                 );
             },
+            Route::Game => {
+                GamePageController::watch(
+                    display,
+                    buzzer,
+                    delay,
+                    switch_z,
+                    navigation,
+                    router,
+                    character,
+                    bet,
+                    shuriken,
+                    target
+                )
+            }
         }
     }
 }

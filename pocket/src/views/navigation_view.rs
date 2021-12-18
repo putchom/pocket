@@ -34,6 +34,7 @@ impl NavigationView {
             Route::Home => include_bytes!("../assets/navigation/home.raw"),
             Route::Meal => include_bytes!("../assets/navigation/meal.raw"),
             Route::Play => include_bytes!("../assets/navigation/play.raw"),
+            Route::Game => include_bytes!("../assets/navigation/play.raw"),
         };
 
         let image_data = ImageRawLE::new(
@@ -46,6 +47,7 @@ impl NavigationView {
             Route::Home => Point::new(0, 0),
             Route::Meal => Point::new(ICON_SIZE, 0),
             Route::Play => Point::new(ICON_SIZE * 2, 0),
+            Route::Game => Point::new(ICON_SIZE * 2, 0),
         };
 
         Image::new(&image_data, point).draw(display)?;

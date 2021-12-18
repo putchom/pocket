@@ -13,6 +13,7 @@ mod views {
     pub mod pedometer_view;
     pub mod pages {
         pub mod eat_page;
+        pub mod game_page;
         pub mod home_page;
         pub mod meal_page;
         pub mod play_page;
@@ -27,6 +28,7 @@ mod controllers {
         pub mod home_page_controller;
         pub mod meal_page_controller;
         pub mod play_page_controller;
+        pub mod game_page_controller;
     }
 }
 
@@ -55,6 +57,7 @@ use models::{
         Router,
     },
     shuriken::Shuriken,
+    target::Target,
 };
 use panic_halt as _;
 use wio_terminal::{
@@ -161,6 +164,9 @@ fn main() -> ! {
     // 手裏剣の初期化
     let mut shuriken = Shuriken::new();
 
+    // 的の初期化
+    let mut target = Target::new();
+
     // 初期画面の描画
     screen::clear_screen(&mut display).unwrap();
     NavigationView::render(&mut display, navigation.focus).unwrap();
@@ -205,6 +211,7 @@ fn main() -> ! {
             &mut meal,
             &mut rice_ball,
             &mut shuriken,
+            &mut target,
         );
 
         delay.delay_ms(100u16);

@@ -8,3 +8,4 @@ pub mod pedometer;
 pub mod rice_ball;
 pub mod router;
 pub mod shuriken;
+pub mod target;

@@ -27,6 +27,7 @@ impl Navigation {
                 Direction::Left => self.focus = Route::Meal,
                 Direction::Right => {}
             },
+            Route::Game => {},
         }
     }
 }

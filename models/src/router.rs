@@ -3,6 +3,7 @@ pub enum Route {
     Home,
     Meal,
     Play,
+    Game,
 }
 
 pub struct Router {

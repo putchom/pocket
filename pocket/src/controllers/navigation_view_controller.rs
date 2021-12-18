@@ -92,6 +92,7 @@ impl NavigationViewController {
                 Route::Play => {
                     PlayPage::render(display, &bet, &shuriken);
                 },
+                Route::Game => {}
             }
         }
     }

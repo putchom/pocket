@@ -16,9 +16,11 @@ use crate::models::{
 use crate::views::{
     navigation_view::NavigationView,
     pages::{
+        fail_page::FailPage,
+        game_page::GamePage,
         home_page::HomePage,
         throw_page::ThrowPage,
-        game_page::GamePage,
+        success_page::SuccessPage,
     },
 };
 
@@ -77,7 +79,7 @@ impl GamePageController {
                     // 手裏剣を消費してBETをリセット
                     Character::play(character, bet, shuriken);
                     // 成功画面を描画
-                    ThrowPage::render(display);
+                    SuccessPage::render(display);
                     delay.delay_ms(3000u16);
                 }
                 TargetPosition::Left | TargetPosition::Right => {
@@ -87,7 +89,7 @@ impl GamePageController {
                     // 親密度をUPせず手裏剣を消費してBETをリセット
                     Character::play(character, bet, shuriken);
                     // 失敗画面を描画
-                    ThrowPage::render(display);
+                    FailPage::render(display);
                     delay.delay_ms(3000u16);
                 }
             }

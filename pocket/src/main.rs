@@ -13,10 +13,12 @@ mod views {
     pub mod pedometer_view;
     pub mod pages {
         pub mod eat_page;
+        pub mod fail_page;
         pub mod game_page;
         pub mod home_page;
         pub mod meal_page;
         pub mod play_page;
+        pub mod success_page;
         pub mod throw_page;
     }
 }

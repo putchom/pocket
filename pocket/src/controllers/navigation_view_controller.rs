@@ -78,8 +78,8 @@ impl NavigationViewController {
             NavigationView::render(display, navigation.focus);
         }
 
-        // 現在のページではないナビゲーションを指し示していてかつ、ルーティングがGameでないかつ、Zが押されたとき
-        if navigation.focus != router.route && navigation.focus != Route::Game && switch_z.is_low().unwrap() {
+        // 現在のページではないナビゲーションを指し示しているかつ、ルーティングがGameでないかつ、Zが押されたとき
+        if navigation.focus != router.route && router.route != Route::Game && switch_z.is_low().unwrap() {
             beep(buzzer, delay, 800.hz(), 200u16);
             Router::update(router, navigation.focus);
             match router.route {
